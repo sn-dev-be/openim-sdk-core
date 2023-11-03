@@ -109,6 +109,15 @@ func CreateCardMessage(operationID string, cardInfo string) string {
 	return syncCall(operationID, UserForSDK.Conversation().CreateCardMessage, cardInfo)
 
 }
+
+func CreateTransferMessage(operationID string, transferInfo string) string {
+	return syncCall(operationID, UserForSDK.Conversation().CreateTransferMessage, transferInfo)
+}
+
+func CreateRedPacketMessage(operationID string, redPacketInfo string) string {
+	return syncCall(operationID, UserForSDK.Conversation().CreateRedPacketMessage, redPacketInfo)
+}
+
 func CreateVideoMessageFromFullPath(operationID string, videoFullPath string, videoType string, duration int64, snapshotFullPath string) string {
 	return syncCall(operationID, UserForSDK.Conversation().CreateVideoMessageFromFullPath, videoFullPath, videoType, duration, snapshotFullPath)
 }
@@ -240,4 +249,44 @@ func SearchLocalMessages(callback open_im_sdk_callback.Base, operationID string,
 }
 func SetMessageLocalEx(callback open_im_sdk_callback.Base, operationID string, conversationID, clientMsgID, localEx string) {
 	call(callback, operationID, UserForSDK.Conversation().SetMessageLocalEx, conversationID, clientMsgID, localEx)
+}
+
+func SignalingInvite(callback open_im_sdk_callback.Base, operationID string, userIDList string) {
+	call(callback, operationID, UserForSDK.Signaling().SignalingInvite, userIDList)
+}
+
+func SignalingInviteInGroup(callback open_im_sdk_callback.Base, operationID string, userIDList string, groupID string) {
+	call(callback, operationID, UserForSDK.Signaling().SignalingInviteInGroup, userIDList, groupID)
+}
+
+func SignalingAccept(callback open_im_sdk_callback.Base, operationID string, channelID string) {
+	call(callback, operationID, UserForSDK.Signaling().SignalingAccept, channelID)
+}
+
+func SignalingReject(callback open_im_sdk_callback.Base, operationID string, channelID string, sessionType int) {
+	call(callback, operationID, UserForSDK.Signaling().SignalingReject, channelID, sessionType)
+}
+
+func SignalingJoin(callback open_im_sdk_callback.Base, operationID string, channelID string, groupID string) {
+	call(callback, operationID, UserForSDK.Signaling().SignalingJoin, channelID, groupID)
+}
+
+func SignalingCancel(callback open_im_sdk_callback.Base, operationID string, channelID string, sessionType int, cancelUserID string) {
+	call(callback, operationID, UserForSDK.Signaling().SignalingCancel, channelID, sessionType, cancelUserID)
+}
+
+func SignalingHungUp(callback open_im_sdk_callback.Base, operationID string, channelID string, sessionType int) {
+	call(callback, operationID, UserForSDK.Signaling().SignalingHungUp, channelID, sessionType)
+}
+
+func SignalingClose(callback open_im_sdk_callback.Base, operationID string, channelID string, sessionType int) {
+	call(callback, operationID, UserForSDK.Signaling().SignalingClose, channelID, sessionType)
+}
+
+func UpdateMichoneStatus(callback open_im_sdk_callback.Base, operationID string, channelID string, status int) {
+	call(callback, operationID, UserForSDK.Signaling().MichoneStatusChange, channelID, status)
+}
+
+func UpdateSpeakStatuse(callback open_im_sdk_callback.Base, operationID string, channelID string) {
+	call(callback, operationID, UserForSDK.Signaling().SpeakStatusChange, channelID)
 }

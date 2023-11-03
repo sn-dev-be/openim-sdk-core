@@ -16,6 +16,7 @@ package friend
 
 import (
 	"context"
+
 	"github.com/openimsdk/openim-sdk-core/v3/internal/util"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/constant"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/sdkerrs"
@@ -125,7 +126,8 @@ func (f *Friend) SyncAllBlackList(ctx context.Context) error {
 		return err
 	}
 	log.ZDebug(ctx, "black from server", "data", serverData)
-	localData, err := f.db.GetBlackListDB(ctx)
+	//localData, err := f.db.GetBlackListDB(ctx)
+	localData, err := f.db.GetAllBlackListDB(ctx)
 	if err != nil {
 		return err
 	}

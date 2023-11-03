@@ -219,6 +219,12 @@ type LocalGroupRequest struct {
 	InviterUserID string `gorm:"column:inviter_user_id;size:64"  json:"inviterUserID"`
 }
 
+type LocalGroupSaved struct {
+	GroupID    string `gorm:"column:group_id;primary_key;type:varchar(64)" json:"groupID"`
+	UserID     string `gorm:"column:user_id;primary_key;type:varchar(64)" json:"userID"`
+	CreateTime int64  `gorm:"column:create_time" json:"createTime"`
+}
+
 // string UserID = 1;
 // string Nickname = 2;
 // string FaceUrl = 3;

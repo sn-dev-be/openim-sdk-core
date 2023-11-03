@@ -80,3 +80,11 @@ func SetMessageKvInfoListener(listener open_im_sdk_callback.OnMessageKvInfoListe
 	}
 	UserForSDK.SetMessageKvInfoListener(listener)
 }
+
+func SetSignalingListener(listener open_im_sdk_callback.OnSignalingListener) {
+	if listener == nil || UserForSDK == nil {
+		log.Error("callback or UserForSDK is nil")
+		return
+	}
+	UserForSDK.SetSignalingListener(listener)
+}

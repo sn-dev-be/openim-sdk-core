@@ -75,3 +75,7 @@ func GetBlackList(callback open_im_sdk_callback.Base, operationID string) {
 func RemoveBlack(callback open_im_sdk_callback.Base, operationID string, removeUserID string) {
 	call(callback, operationID, UserForSDK.Friend().RemoveBlack, removeUserID)
 }
+
+func IsBeBlock(callback open_im_sdk_callback.Base, operationID string, owner_block_id string) {
+	call(callback, operationID, UserForSDK.Friend().IsBeBlock, owner_block_id)
+}

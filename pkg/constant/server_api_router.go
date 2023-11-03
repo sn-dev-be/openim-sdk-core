@@ -96,6 +96,10 @@ const (
 	SetGroupMemberInfoRouter          = RouterGroup + "/set_group_member_info"
 	GetGroupAbstractInfoRouter        = RouterGroup + "/get_group_abstract_info"
 
+	SaveGroupRouter         = RouterGroup + "/save_group"
+	UnsaveGroupRouter       = RouterGroup + "/unsave_group"
+	GetSavedGroupListRouter = RouterGroup + "/get_saved_group_list"
+
 	SetReceiveMessageOptRouter         = "/conversation/set_receive_message_opt"
 	GetReceiveMessageOptRouter         = "/conversation/get_receive_message_opt"
 	GetAllConversationMessageOptRouter = "/conversation/get_all_conversation_message_opt"

@@ -153,6 +153,26 @@ func (c *Conversation) CreateCardMessage(ctx context.Context, card *sdk_struct.C
 	return &s, nil
 }
 
+func (c *Conversation) CreateTransferMessage(ctx context.Context, transfer *sdk_struct.TransferElem) (*sdk_struct.MsgStruct, error) {
+	s := sdk_struct.MsgStruct{}
+	err := c.initBasicInfo(ctx, &s, constant.UserMsgType, constant.Transfer)
+	if err != nil {
+		return nil, err
+	}
+	s.TransferElem = transfer
+	return &s, nil
+}
+
+func (c *Conversation) CreateRedPacketMessage(ctx context.Context, redPacket *sdk_struct.RedPacketElem) (*sdk_struct.MsgStruct, error) {
+	s := sdk_struct.MsgStruct{}
+	err := c.initBasicInfo(ctx, &s, constant.UserMsgType, constant.RedPacket)
+	if err != nil {
+		return nil, err
+	}
+	s.RedPacketElem = redPacket
+	return &s, nil
+}
+
 func (c *Conversation) CreateVideoMessageFromFullPath(ctx context.Context, videoFullPath string, videoType string,
 	duration int64, snapshotFullPath string) (*sdk_struct.MsgStruct, error) {
 	dstFile := utils.FileTmpPath(videoFullPath, c.DataDir) //a->b

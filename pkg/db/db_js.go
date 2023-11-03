@@ -17,6 +17,7 @@ package db
 import (
 	"context"
 	"errors"
+
 	"github.com/openimsdk/openim-sdk-core/v3/wasm/exec"
 	"github.com/openimsdk/openim-sdk-core/v3/wasm/indexdb"
 )

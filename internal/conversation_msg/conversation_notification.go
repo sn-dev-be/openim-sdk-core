@@ -17,12 +17,13 @@ package conversation_msg
 import (
 	"context"
 	"encoding/json"
+	"time"
+
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/common"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/constant"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/db/model_struct"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/utils"
 	"github.com/openimsdk/openim-sdk-core/v3/sdk_struct"
-	"time"
 
 	"github.com/OpenIMSDK/protocol/sdkws"
 	"github.com/OpenIMSDK/tools/log"
@@ -64,7 +65,7 @@ func (c *Conversation) doDeleteConversation(c2v common.Cmd2Value) {
 	if err != nil {
 		log.ZError(ctx, "ResetConversation err:", err)
 	}
-	c.doUpdateConversation(common.Cmd2Value{Value: common.UpdateConNode{"", constant.TotalUnreadMessageChanged, ""}})
+	c.doUpdateConversation(common.Cmd2Value{Value: common.UpdateConNode{ConID: "", Action: constant.TotalUnreadMessageChanged, Args: ""}})
 }
 
 func (c *Conversation) doUpdateConversation(c2v common.Cmd2Value) {
@@ -632,7 +633,7 @@ func (c *Conversation) doNotificationNew(c2v common.Cmd2Value) {
 		for _, syncFunc := range []func(c context.Context) error{
 			c.user.SyncLoginUserInfo,
 			c.friend.SyncAllBlackList, c.friend.SyncAllFriendList, c.friend.SyncAllFriendApplication, c.friend.SyncAllSelfFriendApplication,
-			c.group.SyncAllJoinedGroupsAndMembers, c.group.SyncAllAdminGroupApplication, c.group.SyncAllSelfGroupApplication,
+			c.group.SyncAllJoinedGroupsAndMembers, c.group.SyncAllAdminGroupApplication, c.group.SyncAllSelfGroupApplication, c.group.SyncAllSavedGroupFromSrv,
 		} {
 			go func(syncFunc func(c context.Context) error) {
 				_ = syncFunc(ctx)
@@ -681,6 +682,8 @@ func (c *Conversation) doNotificationNew(c2v common.Cmd2Value) {
 				c.doDeleteMsgs(ctx, v)
 			case v.ContentType == constant.HasReadReceipt:
 				c.doReadDrawing(ctx, v)
+			case v.ContentType > constant.RedPacketNotificationBegin && v.ContentType < constant.RedPacketNotificationEnd:
+				c.doRedPacketMsgStatusChange(ctx, v)
 			}
 
 			switch v.SessionType {
@@ -692,8 +695,7 @@ func (c *Conversation) doNotificationNew(c2v common.Cmd2Value) {
 				} else if utils2.Contain(v.ContentType, constant.GroupApplicationRejectedNotification, constant.GroupApplicationAcceptedNotification, constant.JoinGroupApplicationNotification) {
 					c.group.DoNotification(ctx, v)
 				} else if v.ContentType > constant.SignalingNotificationBegin && v.ContentType < constant.SignalingNotificationEnd {
-
-					continue
+					c.signaling.DoNotification(ctx, v)
 				}
 			case constant.GroupChatType, constant.SuperGroupChatType:
 				if v.ContentType > constant.GroupNotificationBegin && v.ContentType < constant.GroupNotificationEnd {

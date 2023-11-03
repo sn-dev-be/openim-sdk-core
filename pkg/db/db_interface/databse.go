@@ -16,6 +16,7 @@ package db_interface
 
 import (
 	"context"
+
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/db/model_struct"
 	"github.com/openimsdk/openim-sdk-core/v3/sdk_struct"
 )
@@ -70,6 +71,13 @@ type GroupModel interface {
 	UpdateGroupMemberField(ctx context.Context, groupID, userID string, args map[string]interface{}) error
 	GetGroupMemberInfoIfOwnerOrAdmin(ctx context.Context) ([]*model_struct.LocalGroupMember, error)
 	SearchGroupMembersDB(ctx context.Context, keyword string, groupID string, isSearchMemberNickname, isSearchUserID bool, offset, count int) (result []*model_struct.LocalGroupMember, err error)
+
+	InsertGroupSaved(ctx context.Context, groupSaved *model_struct.LocalGroupSaved) error
+	DeleteGroupSaved(ctx context.Context, groupID string) error
+	UpdateGroupSaved(ctx context.Context, groupSaved *model_struct.LocalGroupSaved) error
+	GetGroupSavedListDB(ctx context.Context) ([]*model_struct.LocalGroupSaved, error)
+	IsSaved(ctx context.Context, groupID string) (bool, error)
+	GetGroupSavedListSplit(ctx context.Context, offset, count int) ([]*model_struct.LocalGroupSaved, error)
 }
 
 type MessageModel interface {
@@ -237,12 +245,15 @@ type FriendModel interface {
 	GetBothFriendReq(ctx context.Context, fromUserID, toUserID string) ([]*model_struct.LocalFriendRequest, error)
 
 	GetBlackListDB(ctx context.Context) ([]*model_struct.LocalBlack, error)
+	GetAllBlackListDB(ctx context.Context) ([]*model_struct.LocalBlack, error)
 	GetBlackListUserID(ctx context.Context) (blackListUid []string, err error)
 	GetBlackInfoByBlockUserID(ctx context.Context, blockUserID string) (*model_struct.LocalBlack, error)
 	GetBlackInfoList(ctx context.Context, blockUserIDList []string) ([]*model_struct.LocalBlack, error)
+	GetBeBlackInfoByBlockUserId(ctx context.Context, ownerUserID string) (*model_struct.LocalBlack, error)
+
 	InsertBlack(ctx context.Context, black *model_struct.LocalBlack) error
 	UpdateBlack(ctx context.Context, black *model_struct.LocalBlack) error
-	DeleteBlack(ctx context.Context, blockUserID string) error
+	DeleteBlack(ctx context.Context, ownerUserID, blockUserID string) error
 }
 
 type ReactionModel interface {

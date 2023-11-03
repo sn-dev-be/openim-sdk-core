@@ -20,6 +20,8 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"errors"
+	"sync"
+
 	"github.com/OpenIMSDK/protocol/group"
 	"github.com/OpenIMSDK/protocol/sdkws"
 	"github.com/OpenIMSDK/tools/log"
@@ -28,7 +30,6 @@ import (
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/constant"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/db/model_struct"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/utils"
-	"sync"
 )
 
 func (g *Group) getGroupHash(members []*model_struct.LocalGroupMember) uint64 {
@@ -97,7 +98,7 @@ func (g *Group) syncGroupMembers(ctx context.Context, groupID string, members []
 	}
 	log.ZInfo(ctx, "SyncGroupMember GetGroupsInfo", "groupID", groupID, "len", len(gs), "gs", gs)
 	if len(gs) > 0 {
-		v := gs[0]
+		v := GroupInfoRespToLocalGroup(gs[0])
 		count, err := g.db.GetGroupMemberCount(ctx, groupID)
 		if err != nil {
 			return err
@@ -279,4 +280,17 @@ func (g *Group) GetGroupAbstractInfo(ctx context.Context, groupID string) (*grou
 		return nil, errors.New("group not found")
 	}
 	return resp.GroupAbstractInfos[0], nil
+}
+
+func (g *Group) SyncAllSavedGroupFromSrv(ctx context.Context) error {
+	resp, err := util.CallApi[group.GetSavedGroupListResp](ctx, constant.GetSavedGroupListRouter, &group.GetSavedGroupListReq{UserID: g.loginUserID})
+	if err != nil {
+		return err
+	}
+	serverData := resp.GroupSaved
+	localData, err := g.db.GetGroupSavedListDB(ctx)
+	if err != nil {
+		return err
+	}
+	return g.groupSavedSyncer.Sync(ctx, util.Batch(ServerGroupSavedToLocalGroupSaved, serverData), localData, nil)
 }

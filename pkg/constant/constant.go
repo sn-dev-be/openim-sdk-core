@@ -66,6 +66,8 @@ const (
 	CustomMsgOnlineOnly             = 120
 	ReactionMessageModifier         = 121
 	ReactionMessageDeleter          = 122
+	Transfer                        = 123
+	RedPacket                       = 124
 
 	//////////////////////////////////////////
 	NotificationBegin       = 1000
@@ -113,9 +115,47 @@ const (
 	GroupInfoSetNameNotification             = 1520
 	GroupNotificationEnd                     = 1599
 
+	// signaling
 	SignalingNotificationBegin = 1600
 	SignalingNotification      = 1601
 	SignalingNotificationEnd   = 1649
+
+	VoiceCall = 1
+	VideoCall = 2
+
+	SignalingInviation            = 1
+	SignalingAccept               = 2
+	SignalingReject               = 3
+	SignalingJoin                 = 4
+	SignalingCancel               = 5
+	SignalingQuit                 = 6
+	SignalingClose                = 7
+	SignalingMicphoneStatusChange = 8
+	SignalingSpeakStatusChange    = 9
+
+	SignalingInvitedNotification               = 1602
+	SignalingAcceptedNotification              = 1603
+	SignalingRejectedNotification              = 1604
+	SignalingJoinedNotification                = 1605
+	SignalingCanceledNotification              = 1606
+	SignalingHungUpNotification                = 1607
+	SignalingMicphoneStatusChangedNotification = 1608
+	SignalingClosedNotification                = 1609
+	SignalingSpeakStatusChangedNotification    = 1610
+	SignalingGroupInvitedNotification          = 1611
+
+	// redPacket
+	RedPacketNotificationBegin = 2400
+	RedPacketNotificationEnd   = 2500
+
+	RedPacketClaimedNotification       = 2401
+	RedPacketExpiredNotification       = 2402
+	RedPacketClaimedByUserNotification = 2403
+
+	RedPacketSended        = 1
+	RedPacketFullyClaimed  = 2
+	RedPacketExpired       = 3
+	RedPacketClaimedByUser = 4
 
 	SuperGroupNotificationBegin         = 1650
 	SuperGroupUpdateNotification        = 1651
@@ -132,7 +172,17 @@ const (
 
 	BusinessNotificationBegin = 2000
 	BusinessNotification      = 2001
-	BusinessNotificationEnd   = 2099
+
+	TransferSuccessNotification  = 2002
+	TransferFailedNotification   = 2003
+	RechargeSuccessNotification  = 2004
+	RechargeFailedNotification   = 2005
+	WithdrawSuccessNotification  = 2006
+	WithdrawFailedNotification   = 2007
+	RedPacketTimeoutNotification = 2008
+	TransferReceivedNotification = 2009
+
+	BusinessNotificationEnd = 2099
 
 	RevokeNotification = 2101
 

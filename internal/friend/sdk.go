@@ -16,12 +16,15 @@ package friend
 
 import (
 	"context"
+	"errors"
+
 	"github.com/openimsdk/openim-sdk-core/v3/internal/util"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/constant"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/db/model_struct"
 	sdk "github.com/openimsdk/openim-sdk-core/v3/pkg/sdk_params_callback"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/sdkerrs"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/server_api_params"
+	"gorm.io/gorm"
 
 	"github.com/OpenIMSDK/protocol/friend"
 	"github.com/OpenIMSDK/tools/log"
@@ -60,6 +63,10 @@ func (f *Friend) AddFriend(ctx context.Context, userIDReqMsg *friend.ApplyToAddF
 	if err := util.ApiPost(ctx, constant.AddFriendRouter, userIDReqMsg, nil); err != nil {
 		return err
 	}
+
+	//单向添加好友后，需要同步本地好友表
+	f.SyncAllFriendList(ctx)
+
 	return f.SyncAllFriendApplication(ctx)
 }
 
@@ -241,4 +248,21 @@ func (f *Friend) RemoveBlack(ctx context.Context, blackUserID string) error {
 
 func (f *Friend) GetBlackList(ctx context.Context) ([]*model_struct.LocalBlack, error) {
 	return f.db.GetBlackListDB(ctx)
+}
+
+func (f *Friend) IsBeBlock(ctx context.Context, owner_block_id string) (bool, error) {
+	blockInfo, err := f.db.GetBeBlackInfoByBlockUserId(ctx, owner_block_id)
+	if err != nil {
+		// 如果数据不存在，返回 false 和 nil
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return false, nil
+		}
+		return false, err
+	}
+
+	if blockInfo != nil {
+		return true, nil
+	}
+
+	return false, nil
 }

@@ -75,6 +75,9 @@ type OnAdvancedMsgListener interface {
 	OnRecvMessageExtensionsAdded(msgID string, reactionExtensionList string)
 	OnRecvOfflineNewMessage(message string)
 	OnMsgDeleted(message string)
+
+	OnRecvRedPacketStatusChanged(redPacketMsg string)
+	OnRecvSelfSendRedPacketSeqChanged(message string)
 }
 
 type OnBatchMsgListener interface {
@@ -112,21 +115,28 @@ type OnSignalingListener interface {
 
 	OnInviteeAccepted(inviteeAcceptedCallback string)
 
-	OnInviteeAcceptedByOtherDevice(inviteeAcceptedCallback string)
+	// OnInviteeAcceptedByOtherDevice(inviteeAcceptedCallback string)
 
 	OnInviteeRejected(inviteeRejectedCallback string)
 
-	OnInviteeRejectedByOtherDevice(inviteeRejectedCallback string)
+	// OnInviteeRejectedByOtherDevice(inviteeRejectedCallback string)
+
+	OnJoined(joinedCallback string)
 	//
 	OnInvitationCancelled(invitationCancelledCallback string)
 	//
-	OnInvitationTimeout(invitationTimeoutCallback string)
+	// OnInvitationTimeout(invitationTimeoutCallback string)
 	//
 	OnHangUp(hangUpCallback string)
 
-	OnRoomParticipantConnected(onRoomParticipantConnectedCallback string)
+	OnClosed(closedCallback string)
 
-	OnRoomParticipantDisconnected(onRoomParticipantDisconnectedCallback string)
+	OnMicphoneStatusChanged(onMicphoneStatusChangedCallback string)
+	OnSpeakStatusChanged(onSpeakStatusUpdatedCallback string)
+
+	// OnRoomParticipantConnected(onRoomParticipantConnectedCallback string)
+
+	// OnRoomParticipantDisconnected(onRoomParticipantDisconnectedCallback string)
 }
 
 type UploadFileCallback interface {

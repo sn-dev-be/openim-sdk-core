@@ -22,6 +22,7 @@ import (
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/constant"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/db/model_struct"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/sdk_params_callback"
+	"github.com/openimsdk/openim-sdk-core/v3/pkg/sdk_resp_models"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/sdkerrs"
 
 	"github.com/OpenIMSDK/tools/log"
@@ -180,7 +181,7 @@ func (g *Group) GetJoinedGroupList(ctx context.Context) ([]*model_struct.LocalGr
 	return g.db.GetJoinedGroupListDB(ctx)
 }
 
-func (g *Group) GetSpecifiedGroupsInfo(ctx context.Context, groupIDs []string) ([]*model_struct.LocalGroup, error) {
+func (g *Group) GetSpecifiedGroupsInfo(ctx context.Context, groupIDs []string) ([]*sdk_resp_models.GroupInfoResp, error) {
 	groupList, err := g.db.GetJoinedGroupListDB(ctx)
 	if err != nil {
 		return nil, err
@@ -189,13 +190,32 @@ func (g *Group) GetSpecifiedGroupsInfo(ctx context.Context, groupIDs []string) (
 	if err != nil {
 		return nil, err
 	}
+
+	savedGroupList, err := g.db.GetGroupSavedListDB(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var saveGroupIDs []string // 用于存储 group_id 值的切片
+
+	for _, group := range savedGroupList {
+		saveGroupIDs = append(saveGroupIDs, group.GroupID)
+	}
+
 	groupIDMap := utils.SliceSet(groupIDs)
 	groups := append(groupList, superGroupList...)
-	res := make([]*model_struct.LocalGroup, 0, len(groupIDs))
-	for i, v := range groups {
+	res := make([]*sdk_resp_models.GroupInfoResp, 0, len(groupIDs))
+	for _, v := range groups {
 		if _, ok := groupIDMap[v.GroupID]; ok {
 			delete(groupIDMap, v.GroupID)
-			res = append(res, groups[i])
+
+			saved := utils.Contain(v.GroupID, saveGroupIDs...)
+			//封装 group_info_resp
+			resObj := LocalGroupToGroupInfoResp(v)
+			if saved {
+				resObj.Saved = 1
+			}
+			res = append(res, resObj)
 		}
 	}
 	if len(groupIDMap) > 0 {
@@ -207,7 +227,17 @@ func (g *Group) GetSpecifiedGroupsInfo(ctx context.Context, groupIDs []string) (
 			for i := range groups.GroupInfos {
 				groups.GroupInfos[i].MemberCount = 0
 			}
-			res = append(res, util.Batch(ServerGroupToLocalGroup, groups.GroupInfos)...)
+
+			groupList := util.Batch(ServerGroupToLocalGroup, groups.GroupInfos)
+			for _, v := range groupList {
+				saved := utils.Contain(v.GroupID, saveGroupIDs...)
+				//封装 group_info_resp
+				resObj := LocalGroupToGroupInfoResp(v)
+				if saved {
+					resObj.Saved = 1
+				}
+				res = append(res, resObj)
+			}
 		}
 	}
 	return res, nil
@@ -359,4 +389,41 @@ func (g *Group) IsJoinGroup(ctx context.Context, groupID string) (bool, error) {
 		}
 	}
 	return false, nil
+}
+
+func (g *Group) SaveGroup(ctx context.Context, groupID string) (bool, error) {
+	if err := util.ApiPost(ctx, constant.SaveGroupRouter, &group.SaveGroupReq{GroupID: groupID, UserID: g.loginUserID}, nil); err != nil {
+		return false, err
+	}
+	if err := g.SyncAllSavedGroupFromSrv(ctx); err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+func (g *Group) UnsaveGroup(ctx context.Context, groupID string) (bool, error) {
+	if err := util.ApiPost(ctx, constant.UnsaveGroupRouter, &group.UnsaveGroupReq{GroupID: groupID, UserID: g.loginUserID}, nil); err != nil {
+		return false, err
+	}
+	if err := g.SyncAllSavedGroupFromSrv(ctx); err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+func (g *Group) GetGroupSavedListSplit(ctx context.Context, offset, count int) ([]*model_struct.LocalGroup, error) {
+	group_saved_list, err := g.db.GetGroupSavedListSplit(ctx, offset, count)
+	if err != nil {
+		return nil, err
+	}
+	resp := []*model_struct.LocalGroup{}
+	for _, groupSaved := range group_saved_list {
+		groupInfo, err := g.db.GetGroupInfoByGroupID(ctx, groupSaved.GroupID)
+		if err != nil {
+			continue
+		}
+		resp = append(resp, groupInfo)
+
+	}
+	return resp, nil
 }

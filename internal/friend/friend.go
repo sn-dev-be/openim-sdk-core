@@ -18,6 +18,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
 	"github.com/openimsdk/openim-sdk-core/v3/internal/user"
 	"github.com/openimsdk/openim-sdk-core/v3/open_im_sdk_callback"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/common"
@@ -88,7 +89,7 @@ func (f *Friend) initSyncer() {
 	f.blockSyncer = syncer.New(func(ctx context.Context, value *model_struct.LocalBlack) error {
 		return f.db.InsertBlack(ctx, value)
 	}, func(ctx context.Context, value *model_struct.LocalBlack) error {
-		return f.db.DeleteBlack(ctx, value.BlockUserID)
+		return f.db.DeleteBlack(ctx, value.OwnerUserID, value.BlockUserID)
 	}, func(ctx context.Context, server *model_struct.LocalBlack, local *model_struct.LocalBlack) error {
 		return f.db.UpdateBlack(ctx, server)
 	}, func(value *model_struct.LocalBlack) [2]string {
@@ -272,7 +273,16 @@ func (f *Friend) doNotification(ctx context.Context, msg *sdkws.MsgData) error {
 		if err := utils.UnmarshalNotificationElem(msg.Content, &tips); err != nil {
 			return err
 		}
-		if tips.FromToUserID.FromUserID == f.loginUserID {
+		// if tips.FromToUserID.FromUserID == f.loginUserID {
+		// 	return f.SyncAllBlackList(ctx)
+		// } else if tips.FromToUserID.ToUserID == f.loginUserID {
+		// 	return f.SyncAllBlackList(ctx)
+		// }
+		if tips.FromToUserID.ToUserID == f.loginUserID {
+			return f.SyncAllBlackList(ctx)
+		} else if tips.FromToUserID.ToUserID == f.loginUserID {
+			return f.SyncAllBlackList(ctx)
+		} else if tips.FromToUserID.ToUserID == f.loginUserID {
 			return f.SyncAllBlackList(ctx)
 		}
 	case constant.BlackDeletedNotification:
@@ -280,7 +290,16 @@ func (f *Friend) doNotification(ctx context.Context, msg *sdkws.MsgData) error {
 		if err := utils.UnmarshalNotificationElem(msg.Content, &tips); err != nil {
 			return err
 		}
-		if tips.FromToUserID.FromUserID == f.loginUserID {
+		// if tips.FromToUserID.FromUserID == f.loginUserID {
+		// 	return f.SyncAllBlackList(ctx)
+		// } else if tips.FromToUserID.ToUserID == f.loginUserID {
+		// 	return f.SyncAllBlackList(ctx)
+		// }
+		if tips.FromToUserID.ToUserID == f.loginUserID {
+			return f.SyncAllBlackList(ctx)
+		} else if tips.FromToUserID.ToUserID == f.loginUserID {
+			return f.SyncAllBlackList(ctx)
+		} else if tips.FromToUserID.ToUserID == f.loginUserID {
 			return f.SyncAllBlackList(ctx)
 		}
 	default:

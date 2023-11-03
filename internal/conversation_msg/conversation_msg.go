@@ -18,6 +18,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+
 	utils2 "github.com/OpenIMSDK/tools/utils"
 	"github.com/openimsdk/openim-sdk-core/v3/internal/business"
 	"github.com/openimsdk/openim-sdk-core/v3/internal/cache"
@@ -26,6 +27,7 @@ import (
 	"github.com/openimsdk/openim-sdk-core/v3/internal/full"
 	"github.com/openimsdk/openim-sdk-core/v3/internal/group"
 	"github.com/openimsdk/openim-sdk-core/v3/internal/interaction"
+	"github.com/openimsdk/openim-sdk-core/v3/internal/signaling"
 	"github.com/openimsdk/openim-sdk-core/v3/internal/user"
 	"github.com/openimsdk/openim-sdk-core/v3/open_im_sdk_callback"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/ccontext"
@@ -39,10 +41,11 @@ import (
 
 	"github.com/OpenIMSDK/tools/log"
 
-	"github.com/openimsdk/openim-sdk-core/v3/pkg/utils"
-	"github.com/openimsdk/openim-sdk-core/v3/sdk_struct"
 	"sort"
 	"time"
+
+	"github.com/openimsdk/openim-sdk-core/v3/pkg/utils"
+	"github.com/openimsdk/openim-sdk-core/v3/sdk_struct"
 
 	"github.com/jinzhu/copier"
 )
@@ -66,6 +69,7 @@ type Conversation struct {
 	user                 *user.User
 	file                 *file.File
 	business             *business.Business
+	signaling            *signaling.Signaling
 	messageController    *MessageController
 	cache                *cache.Cache[string, *model_struct.LocalConversation]
 	full                 *full.Full
@@ -108,7 +112,8 @@ func NewConversation(ctx context.Context, longConnMgr *interaction.LongConnMgr, 
 	ch chan common.Cmd2Value,
 	friend *friend.Friend, group *group.Group, user *user.User,
 	conversationListener open_im_sdk_callback.OnConversationListener,
-	msgListener open_im_sdk_callback.OnAdvancedMsgListener, business *business.Business, full *full.Full, file *file.File) *Conversation {
+	msgListener open_im_sdk_callback.OnAdvancedMsgListener, business *business.Business, full *full.Full, file *file.File,
+	signaling *signaling.Signaling) *Conversation {
 	info := ccontext.Info(ctx)
 	n := &Conversation{db: db,
 		LongConnMgr:          longConnMgr,
@@ -121,6 +126,7 @@ func NewConversation(ctx context.Context, longConnMgr *interaction.LongConnMgr, 
 		user:                 user,
 		full:                 full,
 		business:             business,
+		signaling:            signaling,
 		file:                 file,
 		messageController:    NewMessageController(db),
 		IsExternalExtensions: info.IsExternalExtensions(),
@@ -253,6 +259,10 @@ func (c *Conversation) doMsgNew(c2v common.Cmd2Value) {
 							msg.Status = constant.MsgStatusFiltered
 						}
 						updateMessage = append(updateMessage, c.msgStructToLocalChatLog(msg))
+
+						if m.ContentType == constant.RedPacket {
+							c.msgListener.OnRecvSelfSendRedPacketSeqChanged(utils.StructToJsonString(msg))
+						}
 					} else {
 						exceptionMsg = append(exceptionMsg, c.msgStructToLocalErrChatLog(msg))
 					}
@@ -843,11 +853,21 @@ func (c *Conversation) msgHandleByContentType(msg *sdk_struct.MsgStruct) (err er
 		t := sdk_struct.CardElem{}
 		err = utils.JsonStringToStruct(msg.Content, &t)
 		msg.CardElem = &t
+	case constant.Transfer:
+		t := sdk_struct.TransferElem{}
+		err = utils.JsonStringToStruct(msg.Content, &t)
+		msg.TransferElem = &t
+	case constant.RedPacket:
+		t := sdk_struct.RedPacketElem{}
+		err = utils.JsonStringToStruct(msg.Content, &t)
+		msg.RedPacketElem = &t
 	default:
+
 		t := sdk_struct.NotificationElem{}
 		err = utils.JsonStringToStruct(msg.Content, &t)
 		msg.NotificationElem = &t
 	}
+
 	msg.Content = ""
 
 	return utils.Wrap(err, "")

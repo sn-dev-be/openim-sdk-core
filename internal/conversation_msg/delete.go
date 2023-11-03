@@ -234,7 +234,7 @@ func (c *Conversation) doDeleteMsgs(ctx context.Context, msg *sdkws.MsgData) {
 func (c *Conversation) doClearConversations(ctx context.Context, msg *sdkws.MsgData) {
 	tips := sdkws.ClearConversationTips{}
 	utils.UnmarshalNotificationElem(msg.Content, &tips)
-	log.ZDebug(ctx, "doClearConversations", "tips", tips)
+	log.ZDebug(ctx, "doClearConversations", "tips", &tips)
 	for _, v := range tips.ConversationIDs {
 		if err := c.clearConversationAndDeleteAllMsg(ctx, v, false, c.db.ClearConversation); err != nil {
 			log.ZError(ctx, "clearConversation err", err, "conversationID", v)

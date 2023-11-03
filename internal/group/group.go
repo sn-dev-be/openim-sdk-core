@@ -16,6 +16,7 @@ package group
 
 import (
 	"context"
+
 	"github.com/OpenIMSDK/protocol/group"
 	"github.com/OpenIMSDK/protocol/sdkws"
 	"github.com/OpenIMSDK/tools/log"
@@ -51,6 +52,7 @@ type Group struct {
 	groupMemberSyncer       *syncer.Syncer[*model_struct.LocalGroupMember, [2]string]
 	groupRequestSyncer      *syncer.Syncer[*model_struct.LocalGroupRequest, [2]string]
 	groupAdminRequestSyncer *syncer.Syncer[*model_struct.LocalAdminGroupRequest, [2]string]
+	groupSavedSyncer        *syncer.Syncer[*model_struct.LocalGroupSaved, [2]string]
 	loginTime               int64
 	joinedSuperGroupCh      chan common.Cmd2Value
 	heartbeatCmdCh          chan common.Cmd2Value
@@ -91,7 +93,16 @@ func (g *Group) initSyncer() {
 				}
 				g.listener.OnGroupDismissed(utils.StructToJsonString(server))
 			} else {
-				g.listener.OnGroupInfoChanged(utils.StructToJsonString(server))
+				//把本地群保存状态组装到resp
+				saved, err := g.db.IsSaved(ctx, server.GroupID)
+				if err != nil {
+					log.ZError(ctx, "get group saved failed", err)
+				}
+				group_info_resp := LocalGroupToGroupInfoResp(server)
+				if saved {
+					group_info_resp.Saved = 1
+				}
+				g.listener.OnGroupInfoChanged(utils.StructToJsonString(group_info_resp))
 				if server.GroupName != local.GroupName || local.FaceURL != server.FaceURL {
 					_ = common.TriggerCmdUpdateConversation(ctx, common.UpdateConNode{Action: constant.UpdateConFaceUrlAndNickName, Args: common.SourceIDAndSessionType{SourceID: server.GroupID,
 						SessionType: constant.SuperGroupChatType, FaceURL: server.FaceURL, Nickname: server.GroupName}}, g.conversationCh)
@@ -179,6 +190,15 @@ func (g *Group) initSyncer() {
 		return nil
 	})
 
+	g.groupSavedSyncer = syncer.New(func(ctx context.Context, value *model_struct.LocalGroupSaved) error {
+		return g.db.InsertGroupSaved(ctx, value)
+	}, func(ctx context.Context, value *model_struct.LocalGroupSaved) error {
+		return g.db.DeleteGroupSaved(ctx, value.GroupID)
+	}, func(ctx context.Context, server, local *model_struct.LocalGroupSaved) error {
+		return g.db.UpdateGroupSaved(ctx, server)
+	}, func(value *model_struct.LocalGroupSaved) [2]string {
+		return [...]string{value.GroupID, value.UserID}
+	}, nil, nil)
 }
 
 func (g *Group) SetGroupListener(callback open_im_sdk_callback.OnGroupListener) {

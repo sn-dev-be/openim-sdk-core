@@ -18,6 +18,14 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"net/url"
+	"os"
+	"path/filepath"
+	"sort"
+	"strings"
+	"sync"
+	"time"
+
 	"github.com/openimsdk/openim-sdk-core/v3/internal/file"
 	"github.com/openimsdk/openim-sdk-core/v3/open_im_sdk_callback"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/common"
@@ -29,13 +37,6 @@ import (
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/server_api_params"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/utils"
 	"github.com/openimsdk/openim-sdk-core/v3/sdk_struct"
-	"net/url"
-	"os"
-	"path/filepath"
-	"sort"
-	"strings"
-	"sync"
-	"time"
 
 	"github.com/OpenIMSDK/tools/log"
 
@@ -228,6 +229,10 @@ func (c *Conversation) msgStructToLocalChatLog(src *sdk_struct.MsgStruct) *model
 		lc.Content = utils.StructToJsonString(src.MergeElem)
 	case constant.Card:
 		lc.Content = utils.StructToJsonString(src.CardElem)
+	case constant.Transfer:
+		lc.Content = utils.StructToJsonString(src.TransferElem)
+	case constant.RedPacket:
+		lc.Content = utils.StructToJsonString(src.RedPacketElem)
 	case constant.Location:
 		lc.Content = utils.StructToJsonString(src.LocationElem)
 	case constant.Custom:
@@ -244,6 +249,7 @@ func (c *Conversation) msgStructToLocalChatLog(src *sdk_struct.MsgStruct) *model
 	if src.SessionType == constant.GroupChatType || src.SessionType == constant.SuperGroupChatType {
 		lc.RecvID = src.GroupID
 	}
+
 	lc.AttachedInfo = utils.StructToJsonString(src.AttachedInfoElem)
 	return &lc
 }
@@ -551,7 +557,9 @@ func (c *Conversation) SendMessage(ctx context.Context, s *sdk_struct.MsgStruct,
 			}, NewUploadFileCallback(ctx, callback.OnProgress, s, lc.ConversationID, c.db))
 			if err != nil {
 				c.updateMsgStatusAndTriggerConversation(ctx, s.ClientMsgID, "", s.CreateTime, constant.MsgStatusSendFailed, s, lc)
+				log.ZWarn(ctx, "upload video failed", err)
 				putErrs = err
+				return
 			}
 			s.VideoElem.VideoURL = res.URL
 		}()
@@ -603,6 +611,10 @@ func (c *Conversation) SendMessage(ctx context.Context, s *sdk_struct.MsgStruct,
 		s.Content = utils.StructToJsonString(s.FaceElem)
 	case constant.AdvancedText:
 		s.Content = utils.StructToJsonString(s.AdvancedTextElem)
+	case constant.Transfer:
+		s.Content = utils.StructToJsonString(s.TransferElem)
+	case constant.RedPacket:
+		s.Content = utils.StructToJsonString(s.RedPacketElem)
 	default:
 		return nil, sdkerrs.ErrMsgContentTypeNotSupport
 	}
@@ -687,6 +699,10 @@ func (c *Conversation) SendMessageNotOss(ctx context.Context, s *sdk_struct.MsgS
 		s.Content = utils.StructToJsonString(s.FaceElem)
 	case constant.AdvancedText:
 		s.Content = utils.StructToJsonString(s.AdvancedTextElem)
+	case constant.Transfer:
+		s.Content = utils.StructToJsonString(s.TransferElem)
+	case constant.RedPacket:
+		s.Content = utils.StructToJsonString(s.RedPacketElem)
 	default:
 		return nil, sdkerrs.ErrMsgContentTypeNotSupport
 	}
@@ -800,6 +816,8 @@ func (c *Conversation) SendMessageByBuffer(ctx context.Context, s *sdk_struct.Ms
 		case constant.Card:
 		case constant.Face:
 		case constant.AdvancedText:
+		case constant.Transfer:
+		case constant.RedPacket:
 		default:
 			return nil, sdkerrs.ErrMsgContentTypeNotSupport
 		}
@@ -822,8 +840,15 @@ func (c *Conversation) SendMessageByBuffer(ctx context.Context, s *sdk_struct.Ms
 
 }
 
-func (c *Conversation) sendMessageToServer(ctx context.Context, s *sdk_struct.MsgStruct, lc *model_struct.LocalConversation, callback open_im_sdk_callback.SendMsgCallBack,
-	delFile []string, offlinePushInfo *sdkws.OfflinePushInfo, options map[string]bool) (*sdk_struct.MsgStruct, error) {
+func (c *Conversation) sendMessageToServer(
+	ctx context.Context,
+	s *sdk_struct.MsgStruct,
+	lc *model_struct.LocalConversation,
+	callback open_im_sdk_callback.SendMsgCallBack,
+	delFile []string,
+	offlinePushInfo *sdkws.OfflinePushInfo,
+	options map[string]bool) (*sdk_struct.MsgStruct, error) {
+
 	//Protocol conversion
 	var wsMsgData sdkws.MsgData
 	copier.Copy(&wsMsgData, s)

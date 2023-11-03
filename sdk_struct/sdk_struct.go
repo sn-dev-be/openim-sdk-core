@@ -109,6 +109,19 @@ type CardElem struct {
 	Ex       string `json:"ex"`
 }
 
+type TransferElem struct {
+	TokenLogo     string `json:"tokenLogo"`
+	Amount        string `json:"amount"`
+	Token         string `json:"token"`
+	TransactionID string `json:"transactionID"`
+}
+
+type RedPacketElem struct {
+	RedPacketID string `json:"redPacketID"`
+	Greetings   string `json:"greetings"`
+	Status      int32  `json:"status"`
+}
+
 type PictureElem struct {
 	SourcePath      string           `json:"sourcePath,omitempty"`
 	SourcePicture   *PictureBaseInfo `json:"sourcePicture,omitempty"`
@@ -240,6 +253,8 @@ type MsgStruct struct {
 	AdvancedTextElem     *AdvancedTextElem      `json:"advancedTextElem,omitempty"`
 	TypingElem           *TypingElem            `json:"typingElem,omitempty"`
 	AttachedInfoElem     *AttachedInfoElem      `json:"attachedInfoElem,omitempty"`
+	TransferElem         *TransferElem          `json:"transferElem,omitempty"`
+	RedPacketElem        *RedPacketElem         `json:"redPacketElem,omitempty"`
 }
 
 type AtInfo struct {
@@ -361,4 +376,16 @@ type MsgDeleteNotificationElem struct {
 	GroupID     string   `json:"groupID"`
 	IsAllDelete bool     `json:"isAllDelete"`
 	SeqList     []string `json:"seqList"`
+}
+
+type SignalingStruct struct {
+	SendID           string           `json:"sendID,omitempty"`
+	SenderNickname   string           `json:"senderNickname,omitempty"`
+	SenderFaceURL    string           `json:"senderFaceURL,omitempty"`
+	MediaType        int32            `json:"mediaType,omitempty"`
+	SignalType       int32            `json:"signalType,omitempty"`
+	Content          string           `json:"content,omitempty"`
+	CreateTime       int64            `json:"createTime,omitempty"`
+	SenderPlatformID int32            `json:"senderPlatformID,omitempty"`
+	SignalReq        *sdkws.SignalReq `json:"signalReq,omitempty"`
 }

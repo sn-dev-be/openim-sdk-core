@@ -16,6 +16,7 @@ package group
 
 import (
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/db/model_struct"
+	"github.com/openimsdk/openim-sdk-core/v3/pkg/sdk_resp_models"
 
 	"github.com/OpenIMSDK/protocol/sdkws"
 )
@@ -93,5 +94,60 @@ func ServerGroupRequestToLocalGroupRequest(info *sdkws.GroupRequest) *model_stru
 func ServerGroupRequestToLocalAdminGroupRequest(info *sdkws.GroupRequest) *model_struct.LocalAdminGroupRequest {
 	return &model_struct.LocalAdminGroupRequest{
 		LocalGroupRequest: *ServerGroupRequestToLocalGroupRequest(info),
+	}
+}
+
+func ServerGroupSavedToLocalGroupSaved(info *sdkws.GroupSaved) *model_struct.LocalGroupSaved {
+	return &model_struct.LocalGroupSaved{
+		GroupID:    info.GroupID,
+		UserID:     info.UserID,
+		CreateTime: info.CreateTime,
+	}
+}
+
+func LocalGroupToGroupInfoResp(info *model_struct.LocalGroup) *sdk_resp_models.GroupInfoResp {
+	return &sdk_resp_models.GroupInfoResp{
+		GroupID:                info.GroupID,
+		GroupName:              info.GroupName,
+		Notification:           info.Notification,
+		Introduction:           info.Introduction,
+		FaceURL:                info.FaceURL,
+		CreateTime:             info.CreateTime,
+		Status:                 info.Status,
+		CreatorUserID:          info.CreatorUserID,
+		GroupType:              info.GroupType,
+		OwnerUserID:            info.OwnerUserID,
+		MemberCount:            info.MemberCount,
+		Ex:                     info.Ex,
+		AttachedInfo:           info.AttachedInfo,
+		NeedVerification:       info.NeedVerification,
+		LookMemberInfo:         info.LookMemberInfo,
+		ApplyMemberFriend:      info.ApplyMemberFriend,
+		NotificationUpdateTime: info.NotificationUpdateTime,
+		NotificationUserID:     info.NotificationUserID,
+		Saved:                  0, // 默认值为 0
+	}
+}
+
+func GroupInfoRespToLocalGroup(info *sdk_resp_models.GroupInfoResp) *model_struct.LocalGroup {
+	return &model_struct.LocalGroup{
+		GroupID:                info.GroupID,
+		GroupName:              info.GroupName,
+		Notification:           info.Notification,
+		Introduction:           info.Introduction,
+		FaceURL:                info.FaceURL,
+		CreateTime:             info.CreateTime,
+		Status:                 info.Status,
+		CreatorUserID:          info.CreatorUserID,
+		GroupType:              info.GroupType,
+		OwnerUserID:            info.OwnerUserID,
+		MemberCount:            info.MemberCount,
+		Ex:                     info.Ex,
+		AttachedInfo:           info.AttachedInfo,
+		NeedVerification:       info.NeedVerification,
+		LookMemberInfo:         info.LookMemberInfo,
+		ApplyMemberFriend:      info.ApplyMemberFriend,
+		NotificationUpdateTime: info.NotificationUpdateTime,
+		NotificationUserID:     info.NotificationUserID,
 	}
 }

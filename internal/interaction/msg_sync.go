@@ -235,7 +235,7 @@ func (m *MsgSyncer) doConnected(ctx context.Context) {
 		common.TriggerCmdNotification(m.ctx, sdk_struct.CmdNewMsgComeToConversation{SyncFlag: constant.MsgSyncFailed}, m.conversationCh)
 		return
 	} else {
-		log.ZDebug(m.ctx, "get max seq success", "resp", resp)
+		log.ZDebug(m.ctx, "get max seq success", "resp", &resp)
 	}
 	m.compareSeqsAndBatchSync(ctx, resp.MaxSeqs, connectPullNums)
 	common.TriggerCmdNotification(m.ctx, sdk_struct.CmdNewMsgComeToConversation{SyncFlag: constant.MsgSyncEnd}, m.conversationCh)
@@ -367,7 +367,7 @@ func (m *MsgSyncer) syncMsgBySeqs(ctx context.Context, conversationID string, se
 		var pullMsgResp sdkws.PullMessageBySeqsResp
 		err := m.longConnMgr.SendReqWaitResp(ctx, &pullMsgReq, constant.PullMsgBySeqList, &pullMsgResp)
 		if err != nil {
-			log.ZError(ctx, "syncMsgFromSvrSplit err", err, "pullMsgReq", pullMsgReq)
+			log.ZError(ctx, "syncMsgFromSvrSplit err", err, "pullMsgReq", &pullMsgReq)
 			continue
 		}
 		i++

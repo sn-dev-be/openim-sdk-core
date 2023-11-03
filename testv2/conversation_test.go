@@ -16,10 +16,11 @@ package testv2
 
 import (
 	"context"
+	"testing"
+
 	"github.com/openimsdk/openim-sdk-core/v3/open_im_sdk"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/sdk_params_callback"
 	"github.com/openimsdk/openim-sdk-core/v3/sdk_struct"
-	"testing"
 
 	"github.com/OpenIMSDK/protocol/sdkws"
 )
@@ -300,5 +301,42 @@ func Test_SendImgMsg(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Logf("send smg => %+v\n", res)
+	t.Logf("send smg => %v\n", res)
+}
+
+func Test_SendTransferMsg(t *testing.T) {
+	ctx = context.WithValue(ctx, "callback", TestSendMsg{})
+	transfer := &sdk_struct.TransferElem{
+		TokenLogo:     "test",
+		Token:         "ETH",
+		Amount:        "1",
+		TransactionID: "111",
+	}
+	msg, err := open_im_sdk.UserForSDK.Conversation().CreateTransferMessage(ctx, transfer)
+	if err != nil {
+		t.Fatal(err)
+	}
+	res, err := open_im_sdk.UserForSDK.Conversation().SendMessage(ctx, msg, "6512ba81b6f8463c81a0ab6a", "", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Logf("send transfer => %v\n", res)
+}
+
+func Test_SendRedPacketMsg(t *testing.T) {
+	ctx = context.WithValue(ctx, "callback", TestSendMsg{})
+	redPacket := &sdk_struct.RedPacketElem{
+		RedPacketID: "1",
+		Greetings:   "hello",
+		Status:      1,
+	}
+	msg, err := open_im_sdk.UserForSDK.Conversation().CreateRedPacketMessage(ctx, redPacket)
+	if err != nil {
+		t.Fatal(err)
+	}
+	res, err := open_im_sdk.UserForSDK.Conversation().SendMessage(ctx, msg, "30010", "", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Logf("send redPacket => %v\n", res)
 }

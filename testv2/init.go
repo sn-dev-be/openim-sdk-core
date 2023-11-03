@@ -19,14 +19,15 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/OpenIMSDK/protocol/constant"
-	"github.com/openimsdk/openim-sdk-core/v3/open_im_sdk"
-	"github.com/openimsdk/openim-sdk-core/v3/pkg/ccontext"
 	"io"
 	"math/rand"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/OpenIMSDK/protocol/constant"
+	"github.com/openimsdk/openim-sdk-core/v3/open_im_sdk"
+	"github.com/openimsdk/openim-sdk-core/v3/pkg/ccontext"
 
 	"github.com/OpenIMSDK/tools/log"
 )
@@ -64,6 +65,9 @@ func init() {
 	open_im_sdk.UserForSDK.SetAdvancedMsgListener(&onAdvancedMsgListener{ctx: ctx})
 	open_im_sdk.UserForSDK.SetFriendListener(&onFriendListener{ctx: ctx})
 	open_im_sdk.UserForSDK.SetUserListener(&onUserListener{ctx: ctx})
+	open_im_sdk.UserForSDK.SetBusinessListener(&onBusinessListener{ctx: ctx})
+	open_im_sdk.UserForSDK.SetSignalingListener(&onSignalingListener{ctx: ctx})
+
 	time.Sleep(time.Second * 10)
 }
 
@@ -268,6 +272,14 @@ func (o *onAdvancedMsgListener) OnRecvMessageExtensionsAdded(msgID string, react
 	log.ZInfo(o.ctx, "OnRecvMessageExtensionsAdded", "msgID", msgID, "reactionExtensionList", reactionExtensionList)
 }
 
+func (o *onAdvancedMsgListener) OnRecvSelfSendRedPacketSeqChanged(message string) {
+	log.ZInfo(o.ctx, "OnRecvSelfSendRedPacketSeqChanged", "message", message)
+}
+
+func (o *onAdvancedMsgListener) OnRecvRedPacketStatusChanged(redPacketMsg string) {
+	log.ZInfo(o.ctx, "OnRecvRedPacketStatusChanged", redPacketMsg)
+}
+
 type onFriendListener struct {
 	ctx context.Context
 }
@@ -317,4 +329,52 @@ func (o *onUserListener) OnSelfInfoUpdated(userInfo string) {
 }
 func (o *onUserListener) OnUserStatusChanged(statusMap string) {
 	log.ZDebug(context.Background(), "OnUserStatusChanged", "OnUserStatusChanged", statusMap)
+}
+
+type onBusinessListener struct {
+	ctx context.Context
+}
+
+func (o *onBusinessListener) OnRecvCustomBusinessMessage(businessMessage string) {
+	log.ZDebug(context.Background(), "OnRecvCustomBusinessMessage", "businessMessage ", businessMessage)
+}
+
+type onSignalingListener struct {
+	ctx context.Context
+}
+
+func (o *onSignalingListener) OnReceiveNewInvitation(notification string) {
+	log.ZDebug(context.Background(), "OnReceiveNewInvitation", "notification", notification)
+}
+
+func (o *onSignalingListener) OnInviteeAccepted(notification string) {
+	log.ZDebug(context.Background(), "OnInviteeAccepted", "notification", notification)
+}
+
+func (o *onSignalingListener) OnInviteeRejected(notification string) {
+	log.ZDebug(context.Background(), "OnInviteeRejected", "notification", notification)
+}
+
+func (o *onSignalingListener) OnJoined(notification string) {
+	log.ZDebug(context.Background(), "OnJoined", "notification", notification)
+}
+
+func (o *onSignalingListener) OnInvitationCancelled(notification string) {
+	log.ZDebug(context.Background(), "OnInvitationCancelled", "notification", notification)
+}
+
+func (o *onSignalingListener) OnHangUp(notification string) {
+	log.ZDebug(context.Background(), "OnHangUp", "notification", notification)
+}
+
+func (o *onSignalingListener) OnClosed(notification string) {
+	log.ZDebug(context.Background(), "OnClosed", "notification", notification)
+}
+
+func (o *onSignalingListener) OnMicphoneStatusChanged(notification string) {
+	log.ZDebug(context.Background(), "OnMicphoneStatusChanged", "notification", notification)
+}
+
+func (o *onSignalingListener) OnSpeakStatusChanged(notification string) {
+	log.ZDebug(context.Background(), "OnSpeakStatusChanged", "notification", notification)
 }

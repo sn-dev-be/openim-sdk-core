@@ -20,6 +20,7 @@ package db
 import (
 	"context"
 	"errors"
+
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/db/model_struct"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/utils"
 )
@@ -32,7 +33,24 @@ func (d *DataBase) GetBlackListDB(ctx context.Context) ([]*model_struct.LocalBla
 	}
 	var blackList []model_struct.LocalBlack
 
-	err := d.conn.WithContext(ctx).Find(&blackList).Error
+	err := d.conn.WithContext(ctx).Where("owner_user_id = ?", d.loginUserID).Find(&blackList).Error
+	var transfer []*model_struct.LocalBlack
+	for _, v := range blackList {
+		v1 := v
+		transfer = append(transfer, &v1)
+	}
+	return transfer, err
+}
+
+func (d *DataBase) GetAllBlackListDB(ctx context.Context) ([]*model_struct.LocalBlack, error) {
+	d.friendMtx.Lock()
+	defer d.friendMtx.Unlock()
+	if d == nil {
+		return nil, errors.New("database is not open")
+	}
+	var blackList []model_struct.LocalBlack
+
+	err := d.conn.WithContext(ctx).Where("owner_user_id = ? or block_user_id = ?", d.loginUserID, d.loginUserID).Find(&blackList).Error
 	var transfer []*model_struct.LocalBlack
 	for _, v := range blackList {
 		v1 := v
@@ -53,6 +71,13 @@ func (d *DataBase) GetBlackInfoByBlockUserID(ctx context.Context, blockUserID st
 	var black model_struct.LocalBlack
 	return &black, utils.Wrap(d.conn.WithContext(ctx).Where("owner_user_id = ? AND block_user_id = ? ",
 		d.loginUserID, blockUserID).Take(&black).Error, "GetBlackInfoByBlockUserID failed")
+}
+
+func (d *DataBase) GetBeBlackInfoByBlockUserId(ctx context.Context, ownerUserID string) (*model_struct.LocalBlack, error) {
+	d.friendMtx.Lock()
+	defer d.friendMtx.Unlock()
+	var black model_struct.LocalBlack
+	return &black, utils.Wrap(d.conn.WithContext(ctx).Where("owner_user_id = ?", ownerUserID).Take(&black).Error, "")
 }
 
 func (d *DataBase) GetBlackInfoList(ctx context.Context, blockUserIDList []string) ([]*model_struct.LocalBlack, error) {
@@ -87,8 +112,8 @@ func (d *DataBase) UpdateBlack(ctx context.Context, black *model_struct.LocalBla
 	return utils.Wrap(t.Error, "UpdateBlack failed")
 }
 
-func (d *DataBase) DeleteBlack(ctx context.Context, blockUserID string) error {
+func (d *DataBase) DeleteBlack(ctx context.Context, ownerUserID, blockUserID string) error {
 	d.friendMtx.Lock()
 	defer d.friendMtx.Unlock()
-	return utils.Wrap(d.conn.WithContext(ctx).Where("owner_user_id=? and block_user_id=?", d.loginUserID, blockUserID).Delete(&model_struct.LocalBlack{}).Error, "DeleteBlack failed")
+	return utils.Wrap(d.conn.WithContext(ctx).Where("owner_user_id=? and block_user_id=?", ownerUserID, blockUserID).Delete(&model_struct.LocalBlack{}).Error, "DeleteBlack failed")
 }

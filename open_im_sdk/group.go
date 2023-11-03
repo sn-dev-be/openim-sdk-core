@@ -135,3 +135,15 @@ func SearchGroupMembers(callback open_im_sdk_callback.Base, operationID string, 
 func IsJoinGroup(callback open_im_sdk_callback.Base, operationID string, groupID string) {
 	call(callback, operationID, UserForSDK.Group().IsJoinGroup, groupID)
 }
+
+func SaveGroup(callback open_im_sdk_callback.Base, operationID string, groupID string) {
+	call(callback, operationID, UserForSDK.Group().SaveGroup, groupID)
+}
+
+func UnsaveGroup(callback open_im_sdk_callback.Base, operationID string, groupID string) {
+	call(callback, operationID, UserForSDK.Group().UnsaveGroup, groupID)
+}
+
+func GetGroupSavedListSplit(callback open_im_sdk_callback.Base, operationID string, offset, count int) {
+	call(callback, operationID, UserForSDK.Group().GetGroupSavedListSplit, offset, count)
+}
