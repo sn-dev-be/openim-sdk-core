@@ -149,7 +149,7 @@ func Test_GetTotalUnreadMsgCount(t *testing.T) {
 func Test_SendMessage(t *testing.T) {
 	ctx = context.WithValue(ctx, "callback", TestSendMsg{})
 	msg, _ := open_im_sdk.UserForSDK.Conversation().CreateTextMessage(ctx, "textMsg")
-	_, err := open_im_sdk.UserForSDK.Conversation().SendMessage(ctx, msg, "3411008330", "", nil)
+	_, err := open_im_sdk.UserForSDK.Conversation().SendMessage(ctx, msg, "30010", "", nil)
 	if err != nil {
 		t.Fatal(err)
 	}

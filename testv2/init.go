@@ -41,7 +41,7 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 	listner := &OnConnListener{}
 	config := getConf(APIADDR, WSADDR)
-	config.DataDir = ""
+	// config.DataDir = ""
 	configData, err := json.Marshal(config)
 	if err != nil {
 		panic(err)
@@ -67,6 +67,7 @@ func init() {
 	open_im_sdk.UserForSDK.SetUserListener(&onUserListener{ctx: ctx})
 	open_im_sdk.UserForSDK.SetBusinessListener(&onBusinessListener{ctx: ctx})
 	open_im_sdk.UserForSDK.SetSignalingListener(&onSignalingListener{ctx: ctx})
+	open_im_sdk.UserForSDK.SetClubListener(&onClubListener{ctx: ctx})
 
 	time.Sleep(time.Second * 10)
 }
@@ -377,4 +378,52 @@ func (o *onSignalingListener) OnMicphoneStatusChanged(notification string) {
 
 func (o *onSignalingListener) OnSpeakStatusChanged(notification string) {
 	log.ZDebug(context.Background(), "OnSpeakStatusChanged", "notification", notification)
+}
+
+type onClubListener struct {
+	ctx context.Context
+}
+
+func (o *onClubListener) OnClubDismissed(groupInfo string) {
+	log.ZInfo(o.ctx, "OnClubDismissed", "groupInfo", groupInfo)
+}
+
+func (o *onClubListener) OnJoinedClubAdded(groupInfo string) {
+	log.ZInfo(o.ctx, "OnJoinedClubAdded", "groupInfo", groupInfo)
+}
+
+func (o *onClubListener) OnJoinedClubDeleted(groupInfo string) {
+	log.ZInfo(o.ctx, "OnJoinedClubDeleted", "groupInfo", groupInfo)
+}
+
+func (o *onClubListener) OnClubMemberAdded(groupMemberInfo string) {
+	log.ZInfo(o.ctx, "OnClubMemberAdded", "groupMemberInfo", groupMemberInfo)
+}
+
+func (o *onClubListener) OnClubMemberDeleted(groupMemberInfo string) {
+	log.ZInfo(o.ctx, "OnClubMemberDeleted", "groupMemberInfo", groupMemberInfo)
+}
+
+func (o *onClubListener) OnClubApplicationAdded(groupApplication string) {
+	log.ZInfo(o.ctx, "OnClubApplicationAdded", "groupApplication", groupApplication)
+}
+
+func (o *onClubListener) OnClubApplicationDeleted(groupApplication string) {
+	log.ZInfo(o.ctx, "OnClubApplicationDeleted", "groupApplication", groupApplication)
+}
+
+func (o *onClubListener) OnClubInfoChanged(groupInfo string) {
+	log.ZInfo(o.ctx, "OnClubInfoChanged", "groupInfo", groupInfo)
+}
+
+func (o *onClubListener) OnClubMemberInfoChanged(groupMemberInfo string) {
+	log.ZInfo(o.ctx, "OnClubMemberInfoChanged", "groupMemberInfo", groupMemberInfo)
+}
+
+func (o *onClubListener) OnClubApplicationAccepted(groupApplication string) {
+	log.ZInfo(o.ctx, "OnClubApplicationAccepted", "groupApplication", groupApplication)
+}
+
+func (o *onClubListener) OnClubApplicationRejected(groupApplication string) {
+	log.ZInfo(o.ctx, "OnClubApplicationRejected", "groupApplication", groupApplication)
 }

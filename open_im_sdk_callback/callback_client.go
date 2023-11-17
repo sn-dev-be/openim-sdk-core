@@ -139,6 +139,20 @@ type OnSignalingListener interface {
 	// OnRoomParticipantDisconnected(onRoomParticipantDisconnectedCallback string)
 }
 
+type OnClubListener interface {
+	OnJoinedClubAdded(clubInfo string)
+	OnJoinedClubDeleted(clubInfo string)
+	OnClubMemberAdded(clubMemberInfo string)
+	OnClubMemberDeleted(clubMemberInfo string)
+	OnClubApplicationAdded(clubApplication string)
+	OnClubApplicationDeleted(clubApplication string)
+	OnClubInfoChanged(clubInfo string)
+	OnClubDismissed(clubInfo string)
+	OnClubMemberInfoChanged(clubMemberInfo string)
+	OnClubApplicationAccepted(clubApplication string)
+	OnClubApplicationRejected(clubApplication string)
+}
+
 type UploadFileCallback interface {
 	Open(size int64)                                                    // 文件打开的大小
 	PartSize(partSize int64, num int)                                   // 分片大小,数量

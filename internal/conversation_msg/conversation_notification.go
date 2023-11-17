@@ -703,6 +703,10 @@ func (c *Conversation) doNotificationNew(c2v common.Cmd2Value) {
 				} else if v.ContentType > constant.SignalingNotificationBegin && v.ContentType < constant.SignalingNotificationEnd {
 					continue
 				}
+			case constant.ServerGroupChatType:
+				if v.ContentType > constant.ServerNotificationBegin && v.ContentType < constant.ServerNotificationEnd {
+					c.club.DoNotification(ctx, v)
+				}
 			}
 		}
 	}

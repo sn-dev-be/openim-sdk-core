@@ -184,6 +184,31 @@ const (
 
 	BusinessNotificationEnd = 2099
 
+	// server
+	ServerNotificationBegin = 1800
+
+	ServerCreatedNotification                 = 1801
+	ServerInfoSetNotification                 = 1802
+	JoinServerApplicationNotification         = 1803
+	ServerMemberQuitNotification              = 1804
+	ServerApplicationAcceptedNotification     = 1805
+	ServerApplicationRejectedNotification     = 1806
+	ServerOwnerTransferredNotification        = 1807
+	ServerMemberKickedNotification            = 1808
+	ServerMemberInvitedNotification           = 1809
+	ServerMemberEnterNotification             = 1810
+	ServerDismissedNotification               = 1811
+	ServerMemberMutedNotification             = 1812
+	ServerMemberCancelMutedNotification       = 1813
+	ServerMutedNotification                   = 1814
+	ServerCancelMutedNotification             = 1818
+	ServerMemberInfoSetNotification           = 1816
+	ServerMemberSetToAdminNotification        = 1817
+	ServerMemberSetToOrdinaryUserNotification = 1818
+	ServerInfoSetAnnouncementNotification     = 1819
+	ServerInfoSetNameNotification             = 1820
+	ServerNotificationEnd                     = 1899
+
 	RevokeNotification = 2101
 
 	HasReadReceiptNotification      = 2150
@@ -207,6 +232,7 @@ const (
 	GroupChatType        = 2
 	SuperGroupChatType   = 3
 	NotificationChatType = 4
+	ServerGroupChatType  = 5
 
 	//MsgStatus
 	MsgStatusDefault = 0
@@ -271,6 +297,7 @@ const (
 	NormalGroup                       = 0
 	SuperGroup                        = 1
 	WorkingGroup                      = 2
+	ServerGroup                       = 3
 	SuperGroupTableName               = "local_super_groups"
 	SuperGroupErrChatLogsTableNamePre = "local_sg_err_chat_logs_"
 	ChatLogsTableNamePre              = "chat_logs_"

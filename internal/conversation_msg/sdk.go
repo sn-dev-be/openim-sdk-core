@@ -101,7 +101,7 @@ func (c *Conversation) GetOneConversation(ctx context.Context, sessionType int32
 			}
 			newConversation.ShowName = name
 			newConversation.FaceURL = faceUrl
-		case constant.GroupChatType, constant.SuperGroupChatType:
+		case constant.GroupChatType, constant.SuperGroupChatType, constant.ServerGroupChatType:
 			newConversation.GroupID = sourceID
 			g, err := c.full.GetGroupInfoFromLocal2Svr(ctx, sourceID, sessionType)
 			if err != nil {
@@ -325,6 +325,10 @@ func (c *Conversation) checkID(ctx context.Context, s *sdk_struct.MsgStruct,
 			s.SessionType = constant.SuperGroupChatType
 			lc.ConversationID = c.getConversationIDBySessionType(groupID, constant.SuperGroupChatType)
 			lc.ConversationType = constant.SuperGroupChatType
+		case constant.ServerGroup:
+			s.SessionType = constant.ServerGroupChatType
+			lc.ConversationID = c.getConversationIDBySessionType(groupID, constant.ServerGroupChatType)
+			lc.ConversationType = constant.ServerGroupChatType
 		}
 		s.GroupID = groupID
 		lc.GroupID = groupID
@@ -377,6 +381,8 @@ func (c *Conversation) getConversationIDBySessionType(sourceID string, sessionTy
 		return "sg_" + sourceID // super group chat
 	case constant.NotificationChatType:
 		return "sn_" + sourceID // server notification chat
+	case constant.ServerGroupChatType:
+		return "svg_" + sourceID // server group chat
 	}
 	return ""
 }

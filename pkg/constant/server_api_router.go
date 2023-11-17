@@ -127,6 +127,9 @@ const (
 
 	// auth
 	GetUsersToken = RouterAuth + "/user_token"
+
+	// club
+	GetJoinedServerGroupListRouter = RouterClub + "/get_joined_server_group_list"
 )
 const (
 	RouterGroup        = "/group"
@@ -136,6 +139,7 @@ const (
 	RouterSuperGroup   = "/super_group"
 	RouterMsg          = "/msg"
 	RouterThird        = "/third"
+	RouterClub         = "/club"
 )
 
 const (

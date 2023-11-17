@@ -26,6 +26,7 @@ import (
 	"github.com/OpenIMSDK/protocol/sdkws"
 	"github.com/OpenIMSDK/tools/log"
 	"github.com/openimsdk/openim-sdk-core/v3/internal/business"
+	"github.com/openimsdk/openim-sdk-core/v3/internal/club"
 	conv "github.com/openimsdk/openim-sdk-core/v3/internal/conversation_msg"
 	"github.com/openimsdk/openim-sdk-core/v3/internal/file"
 	"github.com/openimsdk/openim-sdk-core/v3/internal/friend"
@@ -85,6 +86,7 @@ type LoginMgr struct {
 	file         *file.File
 	business     *business.Business
 	signaling    *signaling.Signaling
+	club         *club.Club
 
 	full         *full.Full
 	db           db_interface.DataBase
@@ -111,6 +113,7 @@ type LoginMgr struct {
 	signalingListener           open_im_sdk_callback.OnSignalingListener
 	signalingListenerFroService open_im_sdk_callback.OnSignalingListener
 	businessListener            open_im_sdk_callback.OnCustomBusinessListener
+	clubListener                open_im_sdk_callback.OnClubListener
 
 	conversationCh     chan common.Cmd2Value
 	cmdWsCh            chan common.Cmd2Value
@@ -177,6 +180,10 @@ func (u *LoginMgr) Friend() *friend.Friend {
 
 func (u *LoginMgr) Signaling() *signaling.Signaling {
 	return u.signaling
+}
+
+func (u *LoginMgr) Club() *club.Club {
+	return u.club
 }
 
 func (u *LoginMgr) SetConversationListener(conversationListener open_im_sdk_callback.OnConversationListener) {
@@ -258,6 +265,13 @@ func (u *LoginMgr) SetSignalingListener(listener open_im_sdk_callback.OnSignalin
 	}
 }
 
+func (u *LoginMgr) SetClubListener(listener open_im_sdk_callback.OnClubListener) {
+	if u.club != nil {
+		u.club.SetClubListener(listener)
+	} else {
+		u.clubListener = listener
+	}
+}
 func (u *LoginMgr) GetLoginUserID() string {
 	return u.loginUserID
 }
@@ -352,13 +366,15 @@ func (u *LoginMgr) login(ctx context.Context, userID, token string) error {
 		u.business.SetListener(u.businessListener)
 	}
 	u.signaling = signaling.NewSignaling(ctx, u.longConnMgr, u.db, u.signalingListener)
+	u.club = club.NewClub(u.loginUserID, u.db, u.conversationCh)
+	u.club.SetClubListener(u.clubListener)
 	u.third = third.NewThird(u.info.PlatformID, u.loginUserID, constant.SdkVersion, u.info.LogFilePath, u.file)
 	log.ZDebug(ctx, "forcedSynchronization success...", "login cost time: ", time.Since(t1))
 
 	u.longConnMgr.Run(ctx)
 	u.msgSyncer, _ = interaction.NewMsgSyncer(ctx, u.conversationCh, u.pushMsgAndMaxSeqCh, u.loginUserID, u.longConnMgr, u.db, 0)
 	u.conversation = conv.NewConversation(ctx, u.longConnMgr, u.db, u.conversationCh,
-		u.friend, u.group, u.user, u.conversationListener, u.advancedMsgListener, u.business, u.full, u.file, u.signaling)
+		u.friend, u.group, u.user, u.conversationListener, u.advancedMsgListener, u.business, u.full, u.file, u.signaling, u.club)
 	u.conversation.SetLoginTime()
 	if u.batchMsgListener != nil {
 		u.conversation.SetBatchMsgListener(u.batchMsgListener)

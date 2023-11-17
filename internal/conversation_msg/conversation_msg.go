@@ -22,6 +22,7 @@ import (
 	utils2 "github.com/OpenIMSDK/tools/utils"
 	"github.com/openimsdk/openim-sdk-core/v3/internal/business"
 	"github.com/openimsdk/openim-sdk-core/v3/internal/cache"
+	"github.com/openimsdk/openim-sdk-core/v3/internal/club"
 	"github.com/openimsdk/openim-sdk-core/v3/internal/file"
 	"github.com/openimsdk/openim-sdk-core/v3/internal/friend"
 	"github.com/openimsdk/openim-sdk-core/v3/internal/full"
@@ -70,6 +71,7 @@ type Conversation struct {
 	file                 *file.File
 	business             *business.Business
 	signaling            *signaling.Signaling
+	club                 *club.Club
 	messageController    *MessageController
 	cache                *cache.Cache[string, *model_struct.LocalConversation]
 	full                 *full.Full
@@ -113,7 +115,7 @@ func NewConversation(ctx context.Context, longConnMgr *interaction.LongConnMgr, 
 	friend *friend.Friend, group *group.Group, user *user.User,
 	conversationListener open_im_sdk_callback.OnConversationListener,
 	msgListener open_im_sdk_callback.OnAdvancedMsgListener, business *business.Business, full *full.Full, file *file.File,
-	signaling *signaling.Signaling) *Conversation {
+	signaling *signaling.Signaling, club *club.Club) *Conversation {
 	info := ccontext.Info(ctx)
 	n := &Conversation{db: db,
 		LongConnMgr:          longConnMgr,
@@ -127,6 +129,7 @@ func NewConversation(ctx context.Context, longConnMgr *interaction.LongConnMgr, 
 		full:                 full,
 		business:             business,
 		signaling:            signaling,
+		club:                 club,
 		file:                 file,
 		messageController:    NewMessageController(db),
 		IsExternalExtensions: info.IsExternalExtensions(),
@@ -277,7 +280,7 @@ func (c *Conversation) doMsgNew(c2v common.Cmd2Value) {
 					switch v.SessionType {
 					case constant.SingleChatType:
 						lc.UserID = v.RecvID
-					case constant.GroupChatType, constant.SuperGroupChatType:
+					case constant.GroupChatType, constant.SuperGroupChatType, constant.ServerGroupChatType:
 						lc.GroupID = v.GroupID
 					}
 					if isConversationUpdate {
@@ -304,7 +307,7 @@ func (c *Conversation) doMsgNew(c2v common.Cmd2Value) {
 						lc.UserID = v.SendID
 						lc.ShowName = msg.SenderNickname
 						lc.FaceURL = msg.SenderFaceURL
-					case constant.GroupChatType, constant.SuperGroupChatType:
+					case constant.GroupChatType, constant.SuperGroupChatType, constant.ServerGroupChatType:
 						lc.GroupID = v.GroupID
 					case constant.NotificationChatType:
 						lc.UserID = v.SendID
@@ -944,7 +947,7 @@ func (c *Conversation) addFaceURLAndName(ctx context.Context, lc *model_struct.L
 		lc.FaceURL = faceUrl
 		lc.ShowName = name
 
-	case constant.GroupChatType, constant.SuperGroupChatType:
+	case constant.GroupChatType, constant.SuperGroupChatType, constant.ServerGroupChatType:
 		g, err := c.full.GetGroupInfoFromLocal2Svr(ctx, lc.GroupID, lc.ConversationType)
 		if err != nil {
 			return err

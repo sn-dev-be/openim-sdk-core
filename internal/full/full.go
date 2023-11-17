@@ -45,7 +45,7 @@ func NewFull(user *user.User, friend *friend.Friend, group *group.Group, ch chan
 
 func (u *Full) GetGroupInfoFromLocal2Svr(ctx context.Context, groupID string, sessionType int32) (*model_struct.LocalGroup, error) {
 	switch sessionType {
-	case constant.GroupChatType:
+	case constant.GroupChatType, constant.ServerGroupChatType:
 		return u.group.GetGroupInfoFromLocal2Svr(ctx, groupID)
 	case constant.SuperGroupChatType:
 		return u.GetGroupInfoByGroupID(ctx, groupID)

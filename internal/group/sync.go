@@ -22,6 +22,7 @@ import (
 	"errors"
 	"sync"
 
+	"github.com/OpenIMSDK/protocol/club"
 	"github.com/OpenIMSDK/protocol/group"
 	"github.com/OpenIMSDK/protocol/sdkws"
 	"github.com/OpenIMSDK/tools/log"
@@ -190,6 +191,8 @@ func (g *Group) SyncAllJoinedGroupsAndMembers(ctx context.Context) error {
 }
 func (g *Group) syncAllJoinedGroups(ctx context.Context) ([]*sdkws.GroupInfo, error) {
 	groups, err := g.GetServerJoinGroup(ctx)
+	serverGroups, err := g.GetServerJoinServerGroup(ctx)
+	groups = append(groups, serverGroups...)
 	if err != nil {
 		return nil, err
 	}
@@ -243,6 +246,12 @@ func (g *Group) GetServerJoinGroup(ctx context.Context) ([]*sdkws.GroupInfo, err
 	fn := func(resp *group.GetJoinedGroupListResp) []*sdkws.GroupInfo { return resp.Groups }
 	req := &group.GetJoinedGroupListReq{FromUserID: g.loginUserID, Pagination: &sdkws.RequestPagination{}}
 	return util.GetPageAll(ctx, constant.GetJoinedGroupListRouter, req, fn)
+}
+
+func (g *Group) GetServerJoinServerGroup(ctx context.Context) ([]*sdkws.GroupInfo, error) {
+	fn := func(resp *club.GetJoinedServerGroupListResp) []*sdkws.GroupInfo { return resp.Groups }
+	req := &club.GetJoinedServerGroupListReq{FromUserID: g.loginUserID, Pagination: &sdkws.RequestPagination{}}
+	return util.GetPageAll(ctx, constant.GetJoinedServerGroupListRouter, req, fn)
 }
 
 func (g *Group) GetServerAdminGroupApplicationList(ctx context.Context) ([]*sdkws.GroupRequest, error) {

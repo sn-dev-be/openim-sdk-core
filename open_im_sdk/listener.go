@@ -88,3 +88,11 @@ func SetSignalingListener(listener open_im_sdk_callback.OnSignalingListener) {
 	}
 	UserForSDK.SetSignalingListener(listener)
 }
+
+func SetClubListener(listener open_im_sdk_callback.OnClubListener) {
+	if listener == nil || UserForSDK == nil {
+		log.Error("callback or UserForSDK is nil")
+		return
+	}
+	UserForSDK.SetClubListener(listener)
+}
