@@ -634,6 +634,7 @@ func (c *Conversation) doNotificationNew(c2v common.Cmd2Value) {
 			c.user.SyncLoginUserInfo,
 			c.friend.SyncAllBlackList, c.friend.SyncAllFriendList, c.friend.SyncAllFriendApplication, c.friend.SyncAllSelfFriendApplication,
 			c.group.SyncAllJoinedGroupsAndMembers, c.group.SyncAllAdminGroupApplication, c.group.SyncAllSelfGroupApplication, c.group.SyncAllSavedGroupFromSrv,
+			c.club.SyncAllAdminServerApplication, c.club.SyncAllSelfServerApplication,
 		} {
 			go func(syncFunc func(c context.Context) error) {
 				_ = syncFunc(ctx)

@@ -191,11 +191,14 @@ func (g *Group) SyncAllJoinedGroupsAndMembers(ctx context.Context) error {
 }
 func (g *Group) syncAllJoinedGroups(ctx context.Context) ([]*sdkws.GroupInfo, error) {
 	groups, err := g.GetServerJoinGroup(ctx)
-	serverGroups, err := g.GetServerJoinServerGroup(ctx)
-	groups = append(groups, serverGroups...)
 	if err != nil {
 		return nil, err
 	}
+	serverGroups, err := g.GetServerJoinServerGroup(ctx)
+	if err != nil {
+		return nil, err
+	}
+	groups = append(groups, serverGroups...)
 	localData, err := g.db.GetJoinedGroupListDB(ctx)
 	if err != nil {
 		return nil, err

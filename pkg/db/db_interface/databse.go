@@ -279,6 +279,17 @@ type SendingMessagesModel interface {
 	GetAllSendingMessages(ctx context.Context) (friendRequests []*model_struct.LocalSendingMessages, err error)
 }
 
+type ServerModel interface {
+	InsertAdminServerRequest(ctx context.Context, serverRequest *model_struct.LocalAdminServerRequest) error
+	DeleteAdminServerRequest(ctx context.Context, serverID, userID string) error
+	UpdateAdminServerRequest(ctx context.Context, serverRequest *model_struct.LocalAdminServerRequest) error
+	GetAdminServerApplication(ctx context.Context) ([]*model_struct.LocalAdminServerRequest, error)
+	InsertServerRequest(ctx context.Context, serverRequest *model_struct.LocalServerRequest) error
+	DeleteServerRequest(ctx context.Context, serverID, userID string) error
+	UpdateServerRequest(ctx context.Context, serverRequest *model_struct.LocalServerRequest) error
+	GetSendServerApplication(ctx context.Context) ([]*model_struct.LocalServerRequest, error)
+}
+
 type DataBase interface {
 	Close(ctx context.Context) error
 	InitDB(ctx context.Context, userID string, dataDir string) error
@@ -290,4 +301,5 @@ type DataBase interface {
 	ReactionModel
 	S3Model
 	SendingMessagesModel
+	ServerModel
 }

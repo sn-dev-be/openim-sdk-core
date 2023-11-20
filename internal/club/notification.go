@@ -52,40 +52,40 @@ func (c *Club) doNotification(ctx context.Context, msg *sdkws.MsgData) error {
 	// 		return err
 	// 	}
 	// 	return g.SyncGroups(ctx, detail.Group.GroupID)
-	case constant.JoinServerApplicationNotification: // 1503
+	case constant.JoinServerApplicationNotification:
 		var detail sdkws.JoinServerApplicationTips
 		if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
 			return err
 		}
 		if detail.Applicant.UserID == c.loginUserID {
-			// return g.SyncSelfGroupApplications(ctx, detail.Group.GroupID)
+			return c.SyncSelfServerApplications(ctx, detail.Server.ServerID)
 		} else {
-			// return g.SyncAdminGroupApplications(ctx, detail.Group.GroupID)
+			return c.SyncAdminServerApplications(ctx, detail.Server.ServerID)
 		}
-	// case constant.GroupApplicationAcceptedNotification: // 1505
-	// 	var detail sdkws.GroupApplicationAcceptedTips
-	// 	if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
-	// 		return err
-	// 	}
-	// 	if detail.OpUser.UserID == g.loginUserID {
-	// 		return g.SyncAdminGroupApplications(ctx, detail.Group.GroupID)
-	// 	}
-	// 	if detail.ReceiverAs == 1 {
-	// 		return g.SyncAdminGroupApplications(ctx, detail.Group.GroupID)
-	// 	}
-	// 	return g.SyncGroups(ctx, detail.Group.GroupID)
-	// case constant.GroupApplicationRejectedNotification: // 1506
-	// 	var detail sdkws.GroupApplicationRejectedTips
-	// 	if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
-	// 		return err
-	// 	}
-	// 	if detail.OpUser.UserID == g.loginUserID {
-	// 		return g.SyncAdminGroupApplications(ctx, detail.Group.GroupID)
-	// 	}
-	// 	if detail.ReceiverAs == 1 {
-	// 		return g.SyncAdminGroupApplications(ctx, detail.Group.GroupID)
-	// 	}
-	// 	return g.SyncSelfGroupApplications(ctx, detail.Group.GroupID)
+	case constant.ServerApplicationAcceptedNotification:
+		var detail sdkws.ServerApplicationAcceptedTips
+		if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
+			return err
+		}
+		if detail.OpUser.UserID == c.loginUserID {
+			return c.SyncAdminServerApplications(ctx, detail.Server.ServerID)
+		}
+		if detail.ReceiverAs == 1 {
+			return c.SyncAdminServerApplications(ctx, detail.Server.ServerID)
+		}
+		// return g.SyncGroups(ctx, detail.Group.GroupID)
+	case constant.ServerApplicationRejectedNotification:
+		var detail sdkws.ServerApplicationRejectedTips
+		if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
+			return err
+		}
+		if detail.OpUser.UserID == c.loginUserID {
+			return c.SyncAdminServerApplications(ctx, detail.Server.ServerID)
+		}
+		if detail.ReceiverAs == 1 {
+			return c.SyncAdminServerApplications(ctx, detail.Server.ServerID)
+		}
+		return c.SyncSelfServerApplications(ctx, detail.Server.ServerID)
 	// case constant.GroupOwnerTransferredNotification: // 1507
 	// 	var detail sdkws.GroupOwnerTransferredTips
 	// 	if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {

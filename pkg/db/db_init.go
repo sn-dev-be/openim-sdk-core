@@ -54,6 +54,7 @@ type DataBase struct {
 	friendMtx     sync.RWMutex
 	userMtx       sync.RWMutex
 	superGroupMtx sync.RWMutex
+	serverMtx     sync.RWMutex
 }
 
 func (d *DataBase) GetMultipleMessageReactionExtension(ctx context.Context, msgIDList []string) (result []*model_struct.LocalChatLogReactionExtensions, err error) {
@@ -173,6 +174,8 @@ func (d *DataBase) initDB(ctx context.Context, logLevel int) error {
 		&model_struct.LocalStranger{},
 		&model_struct.LocalSendingMessages{},
 		&model_struct.LocalGroupSaved{},
+		&model_struct.LocalServerRequest{},
+		&model_struct.LocalAdminServerRequest{},
 	)
 	if err != nil {
 		return err

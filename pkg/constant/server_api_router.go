@@ -129,7 +129,9 @@ const (
 	GetUsersToken = RouterAuth + "/user_token"
 
 	// club
-	GetJoinedServerGroupListRouter = RouterClub + "/get_joined_server_group_list"
+	GetJoinedServerGroupListRouter     = RouterClub + "/get_joined_server_group_list"
+	GetRecvServerApplicationListRouter = RouterClub + "/get_recv_server_application_list"
+	GetSendServerApplicationListRouter = RouterClub + "/get_user_req_server_application_list"
 )
 const (
 	RouterGroup        = "/group"
