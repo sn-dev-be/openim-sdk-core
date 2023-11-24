@@ -215,6 +215,7 @@ const (
 	GroupHasReadReceiptNotification = 2155
 	ClearConversationNotification   = 2101
 	DeleteMsgsNotification          = 2102
+	ModifyMessageNotification       = 2103
 
 	HasReadReceipt = 2200
 
@@ -496,4 +497,9 @@ const (
 	NoNetwork        = 1 //有网络->无网络
 	NetworkAvailable = 2 //无网络->有网络
 	NetworkVariation = 3 //有网络，但状态有变化
+)
+
+const (
+	MsgModifyServerRequestStatus = 1
+	MsgModifyRedPacketStatus     = 2
 )

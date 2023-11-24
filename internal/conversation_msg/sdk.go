@@ -380,7 +380,8 @@ func (c *Conversation) getConversationIDBySessionType(sourceID string, sessionTy
 	case constant.SuperGroupChatType:
 		return "sg_" + sourceID // super group chat
 	case constant.NotificationChatType:
-		return "sn_" + sourceID // server notification chat
+		l := []string{sourceID, c.loginUserID}
+		return "sn_" + strings.Join(l, "_") // server notification chat
 	case constant.ServerGroupChatType:
 		return "svg_" + sourceID // server group chat
 	}

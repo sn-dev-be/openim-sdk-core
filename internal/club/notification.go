@@ -21,7 +21,6 @@ import (
 	"github.com/OpenIMSDK/protocol/sdkws"
 	"github.com/OpenIMSDK/tools/log"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/constant"
-	"github.com/openimsdk/openim-sdk-core/v3/pkg/utils"
 )
 
 func (c *Club) DoNotification(ctx context.Context, msg *sdkws.MsgData) {
@@ -53,39 +52,39 @@ func (c *Club) doNotification(ctx context.Context, msg *sdkws.MsgData) error {
 	// 	}
 	// 	return g.SyncGroups(ctx, detail.Group.GroupID)
 	case constant.JoinServerApplicationNotification:
-		var detail sdkws.JoinServerApplicationTips
-		if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
-			return err
-		}
-		if detail.Applicant.UserID == c.loginUserID {
-			return c.SyncSelfServerApplications(ctx, detail.Server.ServerID)
-		} else {
-			return c.SyncAdminServerApplications(ctx, detail.Server.ServerID)
-		}
+		// var detail sdkws.JoinServerApplicationTips
+		// if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
+		// 	return err
+		// }
+		// if detail.Applicant.UserID == c.loginUserID {
+		// 	return c.SyncSelfServerApplications(ctx, detail.Server.ServerID)
+		// } else {
+		// 	return c.SyncAdminServerApplications(ctx, detail.Server.ServerID)
+		// }
 	case constant.ServerApplicationAcceptedNotification:
-		var detail sdkws.ServerApplicationAcceptedTips
-		if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
-			return err
-		}
-		if detail.OpUser.UserID == c.loginUserID {
-			return c.SyncAdminServerApplications(ctx, detail.Server.ServerID)
-		}
-		if detail.ReceiverAs == 1 {
-			return c.SyncAdminServerApplications(ctx, detail.Server.ServerID)
-		}
+		// var detail sdkws.ServerApplicationAcceptedTips
+		// if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
+		// 	return err
+		// }
+		// if detail.OpUser.UserID == c.loginUserID {
+		// 	return c.SyncAdminServerApplications(ctx, detail.Server.ServerID)
+		// }
+		// if detail.ReceiverAs == 1 {
+		// 	return c.SyncAdminServerApplications(ctx, detail.Server.ServerID)
+		// }
 		// return g.SyncGroups(ctx, detail.Group.GroupID)
 	case constant.ServerApplicationRejectedNotification:
-		var detail sdkws.ServerApplicationRejectedTips
-		if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
-			return err
-		}
-		if detail.OpUser.UserID == c.loginUserID {
-			return c.SyncAdminServerApplications(ctx, detail.Server.ServerID)
-		}
-		if detail.ReceiverAs == 1 {
-			return c.SyncAdminServerApplications(ctx, detail.Server.ServerID)
-		}
-		return c.SyncSelfServerApplications(ctx, detail.Server.ServerID)
+		// var detail sdkws.ServerApplicationRejectedTips
+		// if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
+		// 	return err
+		// }
+		// if detail.OpUser.UserID == c.loginUserID {
+		// 	return c.SyncAdminServerApplications(ctx, detail.Server.ServerID)
+		// }
+		// if detail.ReceiverAs == 1 {
+		// 	return c.SyncAdminServerApplications(ctx, detail.Server.ServerID)
+		// }
+		// return c.SyncSelfServerApplications(ctx, detail.Server.ServerID)
 	// case constant.GroupOwnerTransferredNotification: // 1507
 	// 	var detail sdkws.GroupOwnerTransferredTips
 	// 	if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {

@@ -21,7 +21,7 @@ func NewClub(
 		db:             db,
 		conversationCh: conversationCh,
 	}
-	c.initSyncer()
+	// c.initSyncer()
 	return c
 }
 

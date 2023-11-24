@@ -17,6 +17,7 @@ package conversation_msg
 import (
 	"context"
 	"errors"
+
 	"github.com/openimsdk/openim-sdk-core/v3/internal/util"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/common"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/constant"
@@ -26,6 +27,7 @@ import (
 
 	pbMsg "github.com/OpenIMSDK/protocol/msg"
 	"github.com/OpenIMSDK/protocol/sdkws"
+	"github.com/OpenIMSDK/tools/errs"
 	"github.com/OpenIMSDK/tools/log"
 	utils2 "github.com/OpenIMSDK/tools/utils"
 	"github.com/jinzhu/copier"
@@ -187,6 +189,8 @@ func (c *Conversation) revokeOneMessage(ctx context.Context, conversationID, cli
 				return errors.New("only group admin can revoke message")
 			}
 		}
+	default:
+		return errs.ErrConnArgsErr.Wrap("msg sessionType not supported")
 	}
 	if err := util.ApiPost(ctx, constant.RevokeMsgRouter, pbMsg.RevokeMsgReq{ConversationID: conversationID, Seq: message.Seq, UserID: c.loginUserID}, nil); err != nil {
 		return err
