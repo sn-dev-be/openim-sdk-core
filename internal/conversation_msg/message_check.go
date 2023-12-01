@@ -17,6 +17,7 @@ package conversation_msg
 import (
 	"context"
 	"errors"
+
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/constant"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/db/model_struct"
 	sdk "github.com/openimsdk/openim-sdk-core/v3/pkg/sdk_params_callback"
@@ -303,7 +304,7 @@ func (c *Conversation) faceURLAndNicknameHandle(ctx context.Context, self, other
 	switch lc.ConversationType {
 	case constant.SingleChatType:
 		c.singleHandle(ctx, self, others, lc)
-	case constant.SuperGroupChatType:
+	case constant.SuperGroupChatType, constant.ServerGroupChatType:
 		c.groupHandle(ctx, self, others, lc)
 	}
 	return append(self, others...)

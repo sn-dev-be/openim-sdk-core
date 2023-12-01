@@ -255,6 +255,7 @@ type MsgStruct struct {
 	AttachedInfoElem     *AttachedInfoElem      `json:"attachedInfoElem,omitempty"`
 	TransferElem         *TransferElem          `json:"transferElem,omitempty"`
 	RedPacketElem        *RedPacketElem         `json:"redPacketElem,omitempty"`
+	RecvIDList           []string               `json:"recvIDList,omitempty"`
 }
 
 type AtInfo struct {

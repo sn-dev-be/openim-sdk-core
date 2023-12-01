@@ -19,6 +19,7 @@ package db
 
 import (
 	"context"
+
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/constant"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/db/model_struct"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/utils"
@@ -61,7 +62,7 @@ func (d *DataBase) BatchInsertExceptionMsgController(ctx context.Context, messag
 		return nil
 	}
 	switch messageList[len(messageList)-1].SessionType {
-	case constant.SuperGroupChatType:
+	case constant.SuperGroupChatType, constant.ServerGroupChatType:
 		return d.SuperBatchInsertExceptionMsg(ctx, messageList, messageList[len(messageList)-1].RecvID)
 	default:
 		return d.BatchInsertExceptionMsg(ctx, messageList)

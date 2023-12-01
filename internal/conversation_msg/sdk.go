@@ -246,7 +246,7 @@ func (c *Conversation) msgStructToLocalChatLog(src *sdk_struct.MsgStruct) *model
 	default:
 		lc.Content = utils.StructToJsonString(src.NotificationElem)
 	}
-	if src.SessionType == constant.GroupChatType || src.SessionType == constant.SuperGroupChatType {
+	if src.SessionType == constant.GroupChatType || src.SessionType == constant.SuperGroupChatType || src.SessionType == constant.ServerGroupChatType {
 		lc.RecvID = src.GroupID
 	}
 
@@ -257,7 +257,7 @@ func (c *Conversation) msgDataToLocalChatLog(src *sdkws.MsgData) *model_struct.L
 	var lc model_struct.LocalChatLog
 	copier.Copy(&lc, src)
 	lc.Content = string(src.Content)
-	if src.SessionType == constant.GroupChatType || src.SessionType == constant.SuperGroupChatType {
+	if src.SessionType == constant.GroupChatType || src.SessionType == constant.SuperGroupChatType || src.SessionType == constant.ServerGroupChatType {
 		lc.RecvID = src.GroupID
 
 	}
@@ -945,7 +945,7 @@ func (c *Conversation) FindMessageList(ctx context.Context, req []*sdk_params_ca
 				switch message.SessionType {
 				case constant.GroupChatType:
 					fallthrough
-				case constant.SuperGroupChatType:
+				case constant.SuperGroupChatType, constant.ServerGroupChatType:
 					temp.GroupID = temp.RecvID
 					temp.RecvID = c.loginUserID
 				}
@@ -1198,6 +1198,8 @@ func (c *Conversation) getConversationTypeByGroupID(ctx context.Context, groupID
 		return c.getConversationIDBySessionType(groupID, constant.GroupChatType), constant.GroupChatType, nil
 	case constant.SuperGroup, constant.WorkingGroup:
 		return c.getConversationIDBySessionType(groupID, constant.SuperGroupChatType), constant.SuperGroupChatType, nil
+	case constant.ServerGroupChatType:
+		return c.getConversationIDBySessionType(groupID, constant.ServerGroupChatType), constant.ServerGroupChatType, nil
 	default:
 		return "", 0, sdkerrs.ErrGroupType
 	}

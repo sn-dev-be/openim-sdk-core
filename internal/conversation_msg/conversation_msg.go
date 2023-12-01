@@ -235,6 +235,9 @@ func (c *Conversation) doMsgNew(c2v common.Cmd2Value) {
 				continue
 			}
 			//When the message has been marked and deleted by the cloud, it is directly inserted locally without any conversation and message update.
+			if len(msg.RecvIDList) > 0 && !utils.IsContain(c.loginUserID, msg.RecvIDList) {
+				msg.Status = constant.MsgStatusHasDeleted
+			}
 			if msg.Status == constant.MsgStatusHasDeleted {
 				insertMessage = append(insertMessage, c.msgStructToLocalChatLog(msg))
 				continue
@@ -250,7 +253,9 @@ func (c *Conversation) doMsgNew(c2v common.Cmd2Value) {
 				log.ZError(ctx, "conversationID is empty", errors.New("conversationID is empty"), "msg", msg)
 				continue
 			}
+
 			log.ZDebug(ctx, "decode message", "msg", msg)
+
 			if v.SendID == c.loginUserID { //seq
 				// Messages sent by myself  //if  sent through  this terminal
 				m, err := c.db.GetMessage(ctx, conversationID, msg.ClientMsgID)
@@ -487,7 +492,7 @@ func (c *Conversation) genConversationGroupAtType(lc *model_struct.LocalConversa
 func (c *Conversation) msgStructToLocalErrChatLog(m *sdk_struct.MsgStruct) *model_struct.LocalErrChatLog {
 	var lc model_struct.LocalErrChatLog
 	copier.Copy(&lc, m)
-	if m.SessionType == constant.GroupChatType || m.SessionType == constant.SuperGroupChatType {
+	if m.SessionType == constant.GroupChatType || m.SessionType == constant.SuperGroupChatType || m.SessionType == constant.ServerGroupChatType {
 		lc.RecvID = m.GroupID
 	}
 	return &lc
@@ -978,7 +983,8 @@ func (c *Conversation) batchAddFaceURLAndName(ctx context.Context, conversations
 		if conversation.ConversationType == constant.SingleChatType ||
 			conversation.ConversationType == constant.NotificationChatType {
 			userIDs = append(userIDs, conversation.UserID)
-		} else if conversation.ConversationType == constant.SuperGroupChatType {
+		} else if conversation.ConversationType == constant.SuperGroupChatType ||
+			conversation.ConversationType == constant.ServerGroupChatType {
 			groupIDs = append(groupIDs, conversation.GroupID)
 		}
 	}
@@ -1000,7 +1006,8 @@ func (c *Conversation) batchAddFaceURLAndName(ctx context.Context, conversations
 				log.ZWarn(ctx, "user info not found", errors.New("user not found"),
 					"userID", conversation.UserID)
 			}
-		} else if conversation.ConversationType == constant.SuperGroupChatType {
+		} else if conversation.ConversationType == constant.SuperGroupChatType ||
+			conversation.ConversationType == constant.ServerGroupChatType {
 			if v, ok := groups[conversation.GroupID]; ok {
 				conversation.FaceURL = v.FaceURL
 				conversation.ShowName = v.GroupName

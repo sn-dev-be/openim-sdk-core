@@ -150,7 +150,7 @@ func (c *Conversation) doUpdateConversation(c2v common.Cmd2Value) {
 			lc.UserID = st.SourceID
 			lc.ConversationID = c.getConversationIDBySessionType(st.SourceID, constant.SingleChatType)
 			lc.ConversationType = constant.SingleChatType
-		case constant.SuperGroupChatType:
+		case constant.SuperGroupChatType, constant.ServerGroupChatType:
 			conversationID, conversationType, err := c.getConversationTypeByGroupID(ctx, st.SourceID)
 			if err != nil {
 				// log.Error("internal", "getConversationTypeByGroupID database err:", err.Error())
@@ -260,7 +260,6 @@ func (c *Conversation) doUpdateConversation(c2v common.Cmd2Value) {
 			c.ConversationListener.OnNewConversation(utils.StructToJsonString(result))
 		}
 	case constant.SyncConversation:
-
 	}
 }
 
@@ -301,8 +300,16 @@ func (c *Conversation) doUpdateMessage(c2v common.Cmd2Value) {
 
 			}
 		} else {
-			conversationID := c.getConversationIDBySessionType(args.GroupID, constant.SuperGroupChatType)
-			err := c.db.UpdateMsgSenderFaceURLAndSenderNickname(ctx, conversationID, args.UserID, args.FaceURL, args.Nickname)
+			var sessionType int = constant.SuperGroupChatType
+			group, err := c.group.GetGroupInfoFromLocal2Svr(ctx, args.GroupID)
+			if err != nil {
+				log.ZError(ctx, "GetGroupInfoFromLocal2Svr err", err)
+			}
+			if group.GroupType == constant.ServerGroup {
+				sessionType = constant.ServerGroupChatType
+			}
+			conversationID := c.getConversationIDBySessionType(args.GroupID, sessionType)
+			err = c.db.UpdateMsgSenderFaceURLAndSenderNickname(ctx, conversationID, args.UserID, args.FaceURL, args.Nickname)
 			if err != nil {
 				log.ZError(ctx, "UpdateMsgSenderFaceURLAndSenderNickname err", err)
 			}

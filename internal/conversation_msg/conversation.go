@@ -17,6 +17,10 @@ package conversation_msg
 import (
 	"context"
 	"errors"
+	"sort"
+	"strings"
+	"time"
+
 	_ "github.com/openimsdk/openim-sdk-core/v3/internal/common"
 	"github.com/openimsdk/openim-sdk-core/v3/internal/util"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/common"
@@ -27,9 +31,6 @@ import (
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/server_api_params"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/utils"
 	"github.com/openimsdk/openim-sdk-core/v3/sdk_struct"
-	"sort"
-	"strings"
-	"time"
 
 	"github.com/jinzhu/copier"
 
@@ -184,7 +185,7 @@ func (c *Conversation) getAdvancedHistoryMessageList(ctx context.Context, req sd
 		switch sessionType {
 		case constant.GroupChatType:
 			fallthrough
-		case constant.SuperGroupChatType:
+		case constant.SuperGroupChatType, constant.ServerGroupChatType:
 			temp.GroupID = temp.RecvID
 			temp.RecvID = c.loginUserID
 		}
@@ -423,6 +424,10 @@ func (c *Conversation) searchLocalMessages(ctx context.Context, searchParam *sdk
 			temp.GroupID = temp.RecvID
 			temp.RecvID = c.loginUserID
 			conversationID = c.getConversationIDBySessionType(temp.GroupID, constant.SuperGroupChatType)
+		case constant.ServerGroupChatType:
+			temp.GroupID = temp.RecvID
+			temp.RecvID = c.loginUserID
+			conversationID = c.getConversationIDBySessionType(temp.GroupID, constant.ServerGroupChatType)
 		}
 		if oldItem, ok := conversationMap[conversationID]; !ok {
 			searchResultItem := sdk.SearchByConversationResult{}

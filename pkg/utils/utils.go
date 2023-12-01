@@ -18,10 +18,11 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"encoding/json"
+	"sort"
+
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/constant"
 	"github.com/openimsdk/openim-sdk-core/v3/sdk_struct"
 	"github.com/openimsdk/openim-sdk-core/v3/ws_wrapper/utils"
-	"sort"
 
 	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/proto"
@@ -339,6 +340,8 @@ func GetConversationIDByMsg(msg *sdk_struct.MsgStruct) string {
 		return "g_" + msg.GroupID // group chat
 	case constant.SuperGroupChatType:
 		return "sg_" + msg.GroupID // super group chat
+	case constant.ServerGroupChatType:
+		return "svg_" + msg.GroupID
 	case constant.NotificationChatType:
 		return "sn_" + msg.SendID + "_" + msg.RecvID // server notification chat
 	}
