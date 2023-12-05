@@ -175,7 +175,7 @@ func (c *Conversation) pullMessageAndReGetHistoryMessages(ctx context.Context, c
 	seqRange.End = newSeqList[len(newSeqList)-1]
 	seqRange.Num = int64(len(newSeqList))
 	pullMsgReq.SeqRanges = append(pullMsgReq.SeqRanges, &seqRange)
-	log.ZDebug(ctx, "conversation pull message,  ", "req", pullMsgReq)
+	log.ZDebug(ctx, "conversation pull message,  ", "req", &pullMsgReq)
 	if notStartTime && !c.LongConnMgr.IsConnected() {
 		return
 	}
@@ -184,10 +184,9 @@ func (c *Conversation) pullMessageAndReGetHistoryMessages(ctx context.Context, c
 		errHandle(newSeqList, list, err, messageListCallback)
 		log.ZDebug(ctx, "pullmsg SendReqWaitResp failed", err, "req")
 	} else {
-		log.ZDebug(ctx, "syncMsgFromServerSplit pull msg", "resp", pullMsgResp)
+		log.ZDebug(ctx, "syncMsgFromServerSplit pull msg", "resp", &pullMsgResp)
 		if pullMsgResp.Msgs == nil {
-			log.ZWarn(ctx, "syncMsgFromServerSplit pull msg is null", errors.New("pull message is null"),
-				"req", pullMsgReq)
+			log.ZWarn(ctx, "syncMsgFromServerSplit pull msg is null", errors.New("pull message is null"), "req", &pullMsgReq)
 			return
 		}
 		if v, ok := pullMsgResp.Msgs[conversationID]; ok {
@@ -233,6 +232,9 @@ func (c *Conversation) pullMessageIntoTable(ctx context.Context, pullMsgData map
 			log.ZDebug(ctx, "msg detail", "msg", v, "conversationID", conversationID)
 			msg := c.msgDataToLocalChatLog(v)
 			//When the message has been marked and deleted by the cloud, it is directly inserted locally without any conversation and message update.
+			if len(v.RecvIDList) > 0 && !utils.IsContain(c.loginUserID, v.RecvIDList) {
+				msg.Status = constant.MsgStatusHasDeleted
+			}
 			if msg.Status == constant.MsgStatusHasDeleted {
 				insertMessage = append(insertMessage, msg)
 				continue
