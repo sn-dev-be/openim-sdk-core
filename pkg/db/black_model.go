@@ -33,7 +33,7 @@ func (d *DataBase) GetBlackListDB(ctx context.Context) ([]*model_struct.LocalBla
 	}
 	var blackList []model_struct.LocalBlack
 
-	err := d.conn.WithContext(ctx).Where("owner_user_id = ?", d.loginUserID).Find(&blackList).Error
+	err := d.conn.WithContext(ctx).Where("owner_user_id = ?", d.loginUserID).Order("create_time desc").Find(&blackList).Error
 	var transfer []*model_struct.LocalBlack
 	for _, v := range blackList {
 		v1 := v
