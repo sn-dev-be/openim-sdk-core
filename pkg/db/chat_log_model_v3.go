@@ -21,6 +21,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/constant"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/db/model_struct"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/utils"
@@ -93,7 +94,7 @@ func (d *DataBase) GetMessageListNoTime(ctx context.Context, conversationID stri
 	} else {
 		timeOrder = "send_time DESC"
 	}
-	err = utils.Wrap(d.conn.WithContext(ctx).Table(utils.GetTableName(conversationID)).Order(timeOrder).Offset(0).Limit(count).Find(&result).Error, "GetMessageList failed")
+	err = utils.Wrap(d.conn.WithContext(ctx).Table(utils.GetTableName(conversationID)).Where("status != ?", constant.MsgStatusHasDeleted).Order(timeOrder).Offset(0).Limit(count).Find(&result).Error, "GetMessageList failed")
 	if err != nil {
 		return nil, err
 	}
@@ -110,9 +111,9 @@ func (d *DataBase) GetMessageList(ctx context.Context, conversationID string, co
 		timeOrder = "send_time DESC"
 		timeSymbol = "<"
 	}
-	condition = "send_time " + timeSymbol + " ?"
+	condition = "send_time " + timeSymbol + " ? and status != ?"
 
-	err = utils.Wrap(d.conn.WithContext(ctx).Table(utils.GetTableName(conversationID)).Where(condition, startTime).
+	err = utils.Wrap(d.conn.WithContext(ctx).Table(utils.GetTableName(conversationID)).Where(condition, startTime, constant.MsgStatusHasDeleted).
 		Order(timeOrder).Offset(0).Limit(count).Find(&result).Error, "GetMessageList failed")
 	if err != nil {
 		return nil, err
