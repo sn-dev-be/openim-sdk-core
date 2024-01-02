@@ -20,6 +20,7 @@ package db
 import (
 	"context"
 	"errors"
+
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/constant"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/db/model_struct"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/utils"
@@ -319,6 +320,76 @@ func (d *DataBase) GetTotalUnreadMsgCountDB(ctx context.Context) (totalUnreadCou
 	for _, v := range result {
 		totalUnreadCount += int32(v)
 	}
+	return totalUnreadCount, nil
+}
+
+func (d *DataBase) GetServerTotalUnreadCountByConversationID(ctx context.Context, conversationID string) (totalUnreadCount int32, err error) {
+	d.mRWMutex.Lock()
+	defer d.mRWMutex.Unlock()
+
+	// 查询对应的 Conversation
+	c := &model_struct.LocalConversation{}
+	err = d.conn.WithContext(ctx).Where("conversation_id = ?", conversationID).Take(&c).Error
+	if err != nil {
+		return 0, err
+	}
+
+	// 查询对应的 Group
+	group := &model_struct.LocalGroup{}
+	err = d.conn.WithContext(ctx).Where("group_id = ?", c.GroupID).Take(&group).Error
+	if err != nil {
+		return 0, err
+	}
+
+	// 查询同 serverID 的所有 Group
+	var serverGroups []*model_struct.LocalGroup
+	err = d.conn.WithContext(ctx).Where("server_id = ?", group.ServerID).Find(&serverGroups).Error
+	if err != nil {
+		return 0, err
+	}
+
+	// 累加同 serverID 的所有 Group 的 Conversation 的未读消息数
+	for _, serverGroup := range serverGroups {
+		var result []int64
+		err = d.conn.WithContext(ctx).Model(&model_struct.LocalConversation{}).
+			Where("group_id = ? AND conversation_type == 5 AND recv_msg_opt < ? AND latest_msg_send_time > ?", serverGroup.GroupID, constant.ReceiveNotNotifyMessage, 0).
+			Pluck("unread_count", &result).Error
+		if err != nil {
+			return totalUnreadCount, utils.Wrap(errors.New("GetTotalUnreadMsgCount err"), "GetTotalUnreadMsgCount err")
+		}
+		for _, v := range result {
+			totalUnreadCount += int32(v)
+		}
+	}
+
+	return totalUnreadCount, nil
+}
+
+func (d *DataBase) GetServerTotalUnreadCountByServerID(ctx context.Context, serverID string) (totalUnreadCount int32, err error) {
+	d.mRWMutex.Lock()
+	defer d.mRWMutex.Unlock()
+
+	// 查询同 serverID 的所有 Group
+	var serverGroups []*model_struct.LocalGroup
+	err = d.conn.WithContext(ctx).Where("server_id = ?", serverID).Find(&serverGroups).Error
+	if err != nil {
+		return 0, err
+	}
+
+	// 累加同 serverID 的所有 Group 的 Conversation 的未读消息数
+	for _, serverGroup := range serverGroups {
+		var result []int64
+		err = d.conn.WithContext(ctx).Model(&model_struct.LocalConversation{}).
+			Where("group_id = ? AND conversation_type == 5 AND recv_msg_opt < ? AND latest_msg_send_time > ?", serverGroup.GroupID, constant.ReceiveNotNotifyMessage, 0).
+			Pluck("unread_count", &result).Error
+		if err != nil {
+			return totalUnreadCount, utils.Wrap(errors.New("GetTotalUnreadMsgCount err"), "GetTotalUnreadMsgCount err")
+		}
+		for _, v := range result {
+			totalUnreadCount += int32(v)
+		}
+	}
+
 	return totalUnreadCount, nil
 }
 

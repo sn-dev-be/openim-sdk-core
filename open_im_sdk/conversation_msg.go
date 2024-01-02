@@ -16,6 +16,7 @@ package open_im_sdk
 
 import (
 	"bytes"
+
 	"github.com/openimsdk/openim-sdk-core/v3/open_im_sdk_callback"
 )
 
@@ -200,6 +201,10 @@ func TypingStatusUpdate(callback open_im_sdk_callback.Base, operationID string, 
 }
 
 // mark as read
+func GetServerConversationUnreadCount(callback open_im_sdk_callback.Base, operationID string, serverID string) {
+	call(callback, operationID, UserForSDK.Conversation().GetServerConversationUnreadCount, serverID)
+}
+
 func MarkConversationMessageAsRead(callback open_im_sdk_callback.Base, operationID string, conversationID string) {
 	call(callback, operationID, UserForSDK.Conversation().MarkConversationMessageAsRead, conversationID)
 }

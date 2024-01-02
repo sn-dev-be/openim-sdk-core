@@ -30,5 +30,9 @@ func ServerUserToLocalUser(user *sdkws.UserInfo) *model_struct.LocalUser {
 		//AppMangerLevel:   user.AppMangerLevel,
 		GlobalRecvMsgOpt: user.GlobalRecvMsgOpt,
 		//AttachedInfo: user.AttachedInfo,
+		AllowBeep:        user.AllowBeep,
+		AllowVibration:   user.AllowVibration,
+		AllowPushContent: user.AllowPushContent,
+		AllowOnlinePush:  user.AllowOnlinePush,
 	}
 }

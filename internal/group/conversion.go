@@ -41,6 +41,15 @@ func ServerGroupToLocalGroup(info *sdkws.GroupInfo) *model_struct.LocalGroup {
 		NotificationUpdateTime: info.NotificationUpdateTime,
 		NotificationUserID:     info.NotificationUserID,
 		//AttachedInfo:           info.AttachedInfo, // TODO
+		Condition:       info.Condition,
+		ConditionType:   info.ConditionType,
+		SyncMode:        info.SyncMode,
+		VisitorMode:     info.VisitorMode,
+		ViewMode:        info.ViewMode,
+		GroupMode:       info.GroupMode,
+		GroupCategoryID: info.GroupCategoryID,
+		ServerID:        info.ServerID,
+		ReorderWeight:   info.ReorderWeight,
 	}
 }
 

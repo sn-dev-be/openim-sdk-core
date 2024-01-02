@@ -1024,6 +1024,10 @@ func (c *Conversation) MarkConversationMessageAsRead(ctx context.Context, conver
 	return c.markConversationMessageAsRead(ctx, conversationID)
 }
 
+func (c *Conversation) GetServerConversationUnreadCount(ctx context.Context, serverID string) (int32, error) {
+	return c.getServerConversationUnreadCount(ctx, serverID)
+}
+
 func (c *Conversation) MarkMessagesAsReadByMsgID(ctx context.Context, conversationID string, clientMsgIDs []string) error {
 	return c.markMessagesAsReadByMsgID(ctx, conversationID, clientMsgIDs)
 }
@@ -1222,6 +1226,10 @@ func (c *Conversation) DeleteMessageReactionExtensions(ctx context.Context, s *s
 func (c *Conversation) GetMessageListReactionExtensions(ctx context.Context, conversationID string, messageList []*sdk_struct.MsgStruct) ([]*server_api_params.SingleMessageExtensionResult, error) {
 	return c.getMessageListReactionExtensions(ctx, conversationID, messageList)
 
+}
+
+func (c *Conversation) GetServerUnreadCount(ctx context.Context, conversationID string) (int32, error) {
+	return c.db.GetServerTotalUnreadCountByConversationID(ctx, conversationID)
 }
 
 /**

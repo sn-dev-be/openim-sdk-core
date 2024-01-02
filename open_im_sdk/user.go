@@ -35,8 +35,20 @@ func GetUsersInfoFromSrv(callback open_im_sdk_callback.Base, operationID string,
 func SetSelfInfo(callback open_im_sdk_callback.Base, operationID string, userInfo string) {
 	call(callback, operationID, UserForSDK.User().SetSelfInfo, userInfo)
 }
-func SetGlobalRecvMessageOpt(callback open_im_sdk_callback.Base, operationID string, opt int) {
+func SetGlobalRecvMessageOpt(callback open_im_sdk_callback.Base, operationID string, opt int32) {
 	call(callback, operationID, UserForSDK.User().SetGlobalRecvMessageOpt, opt)
+}
+func SetUserAllowBeep(callback open_im_sdk_callback.Base, operationID string, opt int32) {
+	call(callback, operationID, UserForSDK.User().SetUserAllowBeep, opt)
+}
+func SetUserAllowVibration(callback open_im_sdk_callback.Base, operationID string, opt int32) {
+	call(callback, operationID, UserForSDK.User().SetUserAllowVibration, opt)
+}
+func SetUserAllowPushContent(callback open_im_sdk_callback.Base, operationID string, opt int32) {
+	call(callback, operationID, UserForSDK.User().SetUserAllowPushContent, opt)
+}
+func SetUserAllowOnlinePush(callback open_im_sdk_callback.Base, operationID string, opt int32) {
+	call(callback, operationID, UserForSDK.User().SetUserAllowOnlinePush, opt)
 }
 
 // GetSelfUserInfo obtains the user's own information.

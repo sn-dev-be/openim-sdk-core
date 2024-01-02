@@ -18,11 +18,12 @@
 package event_listener
 
 import (
+	"syscall/js"
+
 	"github.com/openimsdk/openim-sdk-core/v3/internal/file"
 	"github.com/openimsdk/openim-sdk-core/v3/open_im_sdk_callback"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/utils"
 	"github.com/openimsdk/openim-sdk-core/v3/sdk_struct"
-	"syscall/js"
 )
 
 type ConnCallback struct {
@@ -90,6 +91,10 @@ func (c ConversationCallback) OnConversationChanged(conversationList string) {
 }
 
 func (c ConversationCallback) OnTotalUnreadMessageCountChanged(totalUnreadCount int32) {
+	c.CallbackWriter.SetEvent(utils.GetSelfFuncName()).SetData(totalUnreadCount).SendMessage()
+}
+
+func (c ConversationCallback) OnServerUnreadMessageCountChanged(totalUnreadCount int32) {
 	c.CallbackWriter.SetEvent(utils.GetSelfFuncName()).SetData(totalUnreadCount).SendMessage()
 }
 

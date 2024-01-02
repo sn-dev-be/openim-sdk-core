@@ -140,6 +140,15 @@ type LocalGroup struct {
 	ApplyMemberFriend      int32  `gorm:"column:apply_member_friend" json:"applyMemberFriend"`
 	NotificationUpdateTime int64  `gorm:"column:notification_update_time" json:"notificationUpdateTime"`
 	NotificationUserID     string `gorm:"column:notification_user_id;size:64" json:"notificationUserID"`
+	Condition              string `gorm:"column:condition"                                    json:"condition"`
+	ConditionType          int32  `gorm:"column:condition_type"                               json:"conditionType"`
+	SyncMode               int32  `gorm:"column:sync_mode;default:0"`
+	VisitorMode            int32  `gorm:"column:visitor_mode;default:0"`
+	ViewMode               int32  `gorm:"column:view_mode;default:0"`
+	GroupMode              int32  `gorm:"column:group_mode;default:1"                         json:"groupMode"`
+	GroupCategoryID        string `gorm:"column:group_category_id;index;size:65"              json:"groupCategoryID"`
+	ServerID               string `gorm:"column:server_id;index;size:64"                      json:"serverID"`
+	ReorderWeight          int32  `gorm:"column:reorder_weight;default:0"                                   json:"reorderWeight"`
 }
 
 //message GroupMemberFullInfo {
@@ -245,6 +254,10 @@ type LocalUser struct {
 	Ex               string `gorm:"column:ex;type:varchar(1024)" json:"ex"`
 	AttachedInfo     string `gorm:"column:attached_info;type:varchar(1024)" json:"attachedInfo"`
 	GlobalRecvMsgOpt int32  `gorm:"column:global_recv_msg_opt" json:"globalRecvMsgOpt"`
+	AllowBeep        int32  `gorm:"column:allow_beep" json:"allowBeep"`
+	AllowVibration   int32  `gorm:"column:allow_vibration" json:"allowVibration"`
+	AllowPushContent int32  `gorm:"column:allow_push_content" json:"allowPushContent"`
+	AllowOnlinePush  int32  `gorm:"column:allow_online_push" json:"allowOnlinePush"`
 }
 
 // message BlackInfo{

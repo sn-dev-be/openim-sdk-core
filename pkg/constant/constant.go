@@ -387,6 +387,7 @@ const (
 	ReceiveMessage          = 0
 	NotReceiveMessage       = 1
 	ReceiveNotNotifyMessage = 2
+	ReceiveNotPushMessage   = 3
 
 	Online  = 1
 	Offline = 0

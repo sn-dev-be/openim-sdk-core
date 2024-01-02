@@ -25,6 +25,8 @@ const (
 	SubscribeUsersStatusRouter    = "/user/subscribe_users_status"
 	GetSubscribeUsersStatusRouter = "/user/get_subscribe_users_status"
 	GetUserStatusRouter           = "/user/get_users_status"
+	GetUserSetttingRouter         = "/user/get_user_setting"
+	SetUserSetttingRouter         = "/user/set_user_setting"
 
 	AddFriendRouter                    = "/friend/add_friend"
 	DeleteFriendRouter                 = "/friend/delete_friend"

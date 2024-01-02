@@ -557,3 +557,18 @@ func UnmarshalNotificationElem(bytes []byte, t interface{}) error {
 	}
 	return nil
 }
+
+func RemoveDuplicates(input []string) []string {
+	seen := make(map[string]struct{})
+	result := []string{}
+
+	for _, str := range input {
+		// 如果字符串不在 map 中，则将其添加到结果切片和 map 中
+		if _, ok := seen[str]; !ok {
+			seen[str] = struct{}{}
+			result = append(result, str)
+		}
+	}
+
+	return result
+}

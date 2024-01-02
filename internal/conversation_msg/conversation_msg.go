@@ -200,6 +200,7 @@ func (c *Conversation) doMsgNew(c2v common.Cmd2Value) {
 	var newMessages sdk_struct.NewMsgList
 	// var reactionMsgModifierList, reactionMsgDeleterList sdk_struct.NewMsgList
 	var isUnreadCount, isConversationUpdate, isHistory, isNotPrivate, isSenderConversationUpdate bool
+	unreadCountChangedConversationIDList := []string{}
 	conversationChangedSet := make(map[string]*model_struct.LocalConversation)
 	newConversationSet := make(map[string]*model_struct.LocalConversation)
 	conversationSet := make(map[string]*model_struct.LocalConversation)
@@ -322,6 +323,7 @@ func (c *Conversation) doMsgNew(c2v common.Cmd2Value) {
 							isTriggerUnReadCount = true
 							lc.UnreadCount = 1
 							c.maxSeqRecorder.Incr(conversationID, 1)
+							unreadCountChangedConversationIDList = append(unreadCountChangedConversationIDList, lc.ConversationID)
 						}
 					}
 					if isConversationUpdate {
@@ -416,7 +418,7 @@ func (c *Conversation) doMsgNew(c2v common.Cmd2Value) {
 	}
 
 	if isTriggerUnReadCount {
-		c.doUpdateConversation(common.Cmd2Value{Value: common.UpdateConNode{Action: constant.TotalUnreadMessageChanged, Args: ""}})
+		c.doUpdateConversation(common.Cmd2Value{Value: common.UpdateConNode{Action: constant.TotalUnreadMessageChanged, Args: utils.RemoveDuplicates(unreadCountChangedConversationIDList)}})
 	}
 	log.ZDebug(ctx, "insert msg", "cost time", time.Since(b), "len", len(allMsg))
 }

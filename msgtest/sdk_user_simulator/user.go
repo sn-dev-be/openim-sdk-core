@@ -3,6 +3,7 @@ package sdk_user_simulator
 import (
 	"context"
 	"fmt"
+
 	"github.com/OpenIMSDK/tools/log"
 	"github.com/openimsdk/openim-sdk-core/v3/internal/login"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/ccontext"

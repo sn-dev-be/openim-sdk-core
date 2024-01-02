@@ -115,6 +115,23 @@ func (c *Conversation) doUpdateConversation(c2v common.Cmd2Value) {
 				log.ZError(ctx, "getTotalUnreadMsgCountDB err", err)
 			}
 
+			lc, err := c.db.GetConversation(ctx, node.ConID)
+			if err != nil {
+				return
+			}
+			if lc.ConversationType == constant.ServerGroupChatType {
+				lg, err := c.db.GetGroupInfoByGroupID(ctx, lc.GroupID)
+				if err != nil && lg.ServerID == "" {
+					return
+				}
+
+				serverUnreadCount, err := c.db.GetServerTotalUnreadCountByConversationID(ctx, node.ConID)
+				if err != nil {
+					// log.Error("internal", "TotalUnreadMessageChanged database err:", err.Error())
+				} else {
+					c.ConversationListener.OnServerUnreadMessageCountChanged(lg.ServerID, serverUnreadCount)
+				}
+			}
 		}
 	// case ConChange:
 	//	err, list := u.getAllConversationListModel()
@@ -141,6 +158,34 @@ func (c *Conversation) doUpdateConversation(c2v common.Cmd2Value) {
 		} else {
 			c.ConversationListener.OnTotalUnreadMessageCountChanged(totalUnreadCount)
 		}
+
+		if node.Args != nil {
+			conversationIDList := node.Args.([]string)
+			for _, conversationID := range conversationIDList {
+				if conversationID != "" {
+					lc, err := c.db.GetConversation(ctx, conversationID)
+					if err != nil {
+						log.ZError(ctx, "internal OnServerUnreadMessageCountChanged get conversation err:", err)
+						return
+					}
+					if lc.ConversationType == constant.ServerGroupChatType {
+						lg, err := c.db.GetGroupInfoByGroupID(ctx, lc.GroupID)
+						if err != nil || lg.ServerID == "" {
+							log.ZError(ctx, "internal OnServerUnreadMessageCountChanged get groupinfo err:", err)
+							return
+						}
+
+						serverUnreadCount, err := c.db.GetServerTotalUnreadCountByConversationID(ctx, conversationID)
+						if err != nil {
+							log.ZError(ctx, "internal OnServerUnreadMessageCountChanged get unreadCount err:", err)
+						} else {
+							c.ConversationListener.OnServerUnreadMessageCountChanged(lg.ServerID, serverUnreadCount)
+						}
+					}
+				}
+			}
+		}
+
 	case constant.UpdateConFaceUrlAndNickName:
 		var lc model_struct.LocalConversation
 		st := node.Args.(common.SourceIDAndSessionType)

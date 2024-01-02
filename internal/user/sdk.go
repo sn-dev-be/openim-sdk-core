@@ -16,10 +16,13 @@ package user
 
 import (
 	"context"
+
 	pbUser "github.com/OpenIMSDK/protocol/user"
 	userPb "github.com/OpenIMSDK/protocol/user"
+	"github.com/OpenIMSDK/protocol/wrapperspb"
 	"github.com/openimsdk/openim-sdk-core/v3/internal/util"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/constant"
+
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/db/model_struct"
 
 	"github.com/OpenIMSDK/protocol/sdkws"
@@ -36,9 +39,45 @@ func (u *User) GetSelfUserInfo(ctx context.Context) (*model_struct.LocalUser, er
 func (u *User) SetSelfInfo(ctx context.Context, userInfo *sdkws.UserInfo) error {
 	return u.updateSelfUserInfo(ctx, userInfo)
 }
-func (u *User) SetGlobalRecvMessageOpt(ctx context.Context, opt int) error {
+func (u *User) SetGlobalRecvMessageOpt(ctx context.Context, opt int32) error {
 	if err := util.ApiPost(ctx, constant.SetGlobalRecvMessageOptRouter,
-		&pbUser.SetGlobalRecvMessageOptReq{UserID: u.loginUserID, GlobalRecvMsgOpt: int32(opt)}, nil); err != nil {
+		&pbUser.SetGlobalRecvMessageOptReq{UserID: u.loginUserID, GlobalRecvMsgOpt: &wrapperspb.Int32Value{Value: opt}}, nil); err != nil {
+		return err
+	}
+	u.SyncLoginUserInfo(ctx)
+	return nil
+}
+
+func (u *User) SetUserAllowBeep(ctx context.Context, opt int32) error {
+	if err := util.ApiPost(ctx, constant.SetGlobalRecvMessageOptRouter,
+		&pbUser.SetGlobalRecvMessageOptReq{UserID: u.loginUserID, AllowBeep: &wrapperspb.Int32Value{Value: opt}}, nil); err != nil {
+		return err
+	}
+	u.SyncLoginUserInfo(ctx)
+	return nil
+}
+
+func (u *User) SetUserAllowVibration(ctx context.Context, opt int32) error {
+	if err := util.ApiPost(ctx, constant.SetGlobalRecvMessageOptRouter,
+		&pbUser.SetGlobalRecvMessageOptReq{UserID: u.loginUserID, AllowVibration: &wrapperspb.Int32Value{Value: opt}}, nil); err != nil {
+		return err
+	}
+	u.SyncLoginUserInfo(ctx)
+	return nil
+}
+
+func (u *User) SetUserAllowPushContent(ctx context.Context, opt int32) error {
+	if err := util.ApiPost(ctx, constant.SetGlobalRecvMessageOptRouter,
+		&pbUser.SetGlobalRecvMessageOptReq{UserID: u.loginUserID, AllowPushContent: &wrapperspb.Int32Value{Value: opt}}, nil); err != nil {
+		return err
+	}
+	u.SyncLoginUserInfo(ctx)
+	return nil
+}
+
+func (u *User) SetUserAllowOnlinePush(ctx context.Context, opt int32) error {
+	if err := util.ApiPost(ctx, constant.SetGlobalRecvMessageOptRouter,
+		&pbUser.SetGlobalRecvMessageOptReq{UserID: u.loginUserID, AllowOnlinePush: &wrapperspb.Int32Value{Value: opt}}, nil); err != nil {
 		return err
 	}
 	u.SyncLoginUserInfo(ctx)

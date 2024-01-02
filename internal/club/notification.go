@@ -36,6 +36,7 @@ func (c *Club) doNotification(ctx context.Context, msg *sdkws.MsgData) error {
 		return errors.New("listener is nil")
 	}
 	switch msg.ContentType {
+	case constant.ServerCreatedNotification:
 	// case constant.GroupCreatedNotification: // 1501
 	// 	var detail sdkws.GroupCreatedTips
 	// 	if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {

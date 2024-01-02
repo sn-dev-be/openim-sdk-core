@@ -21,6 +21,9 @@ func (c *conversationCallBack) OnConversationChanged(conversationList string) {
 func (c *conversationCallBack) OnTotalUnreadMessageCountChanged(totalUnreadCount int32) {
 }
 
+func (c *conversationCallBack) OnServerUnreadMessageCountChanged(totalUnreadCount int32) {
+}
+
 func (c *conversationCallBack) OnRecvMessageExtensionsChanged(msgID string, reactionExtensionList string) {
 }
 

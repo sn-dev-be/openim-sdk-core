@@ -1157,3 +1157,12 @@ func getPrefixTypeKey(typeKey string) string {
 //	}
 //	return result
 //}
+
+// mark a conversation's all message as read
+func (c *Conversation) getServerConversationUnreadCount(ctx context.Context, serverID string) (int32, error) {
+	totalUnreadCount, err := c.db.GetServerTotalUnreadCountByServerID(ctx, serverID)
+	if err != nil {
+		return 0, err
+	}
+	return totalUnreadCount, nil
+}

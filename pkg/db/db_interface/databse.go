@@ -216,6 +216,8 @@ type ConversationModel interface {
 	GetMultipleConversationDB(ctx context.Context, conversationIDList []string) (result []*model_struct.LocalConversation, err error)
 	SearchAllMessageByContentType(ctx context.Context, conversationID string, contentType int) ([]*model_struct.LocalChatLog, error)
 	SuperGroupSearchAllMessageByContentType(ctx context.Context, superGroupID string, contentType int32) ([]*model_struct.LocalChatLog, error)
+	GetServerTotalUnreadCountByConversationID(ctx context.Context, conversationID string) (totalUnreadCount int32, err error)
+	GetServerTotalUnreadCountByServerID(ctx context.Context, serverID string) (totalUnreadCount int32, err error)
 }
 
 type UserModel interface {

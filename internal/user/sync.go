@@ -17,6 +17,7 @@ package user
 import (
 	"context"
 	"errors"
+
 	userPb "github.com/OpenIMSDK/protocol/user"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/constant"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/db/model_struct"

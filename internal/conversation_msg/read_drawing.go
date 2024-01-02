@@ -17,6 +17,7 @@ package conversation_msg
 import (
 	"context"
 	"errors"
+
 	"github.com/openimsdk/openim-sdk-core/v3/internal/util"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/common"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/constant"
@@ -165,10 +166,8 @@ func (c *Conversation) unreadChangeTrigger(ctx context.Context, conversationID s
 		c.doUpdateConversation(common.Cmd2Value{Value: common.UpdateConNode{ConID: conversationID,
 			Action: constant.UpdateLatestMessageChange, Args: []string{conversationID}}, Ctx: ctx})
 	}
-	c.doUpdateConversation(common.Cmd2Value{Value: common.UpdateConNode{ConID: conversationID,
-		Action: constant.ConChange, Args: []string{conversationID}}, Ctx: ctx})
-	c.doUpdateConversation(common.Cmd2Value{Value: common.UpdateConNode{Action: constant.TotalUnreadMessageChanged},
-		Ctx: ctx})
+	c.doUpdateConversation(common.Cmd2Value{Value: common.UpdateConNode{ConID: conversationID, Action: constant.ConChange, Args: []string{conversationID}}, Ctx: ctx})
+	c.doUpdateConversation(common.Cmd2Value{Value: common.UpdateConNode{Action: constant.TotalUnreadMessageChanged, Args: []string{conversationID}}, Ctx: ctx})
 }
 
 func (c *Conversation) doUnreadCount(ctx context.Context, conversation *model_struct.LocalConversation, hasReadSeq int64, seqs []int64) {
