@@ -78,6 +78,8 @@ type GroupModel interface {
 	GetGroupSavedListDB(ctx context.Context) ([]*model_struct.LocalGroupSaved, error)
 	IsSaved(ctx context.Context, groupID string) (bool, error)
 	GetGroupSavedListSplit(ctx context.Context, offset, count int) ([]*model_struct.LocalGroupSaved, error)
+
+	GetGroupsByServer(ctx context.Context, serverIDs []string) ([]*model_struct.LocalGroup, error)
 }
 
 type MessageModel interface {
@@ -281,7 +283,7 @@ type SendingMessagesModel interface {
 	GetAllSendingMessages(ctx context.Context) (friendRequests []*model_struct.LocalSendingMessages, err error)
 }
 
-type ServerModel interface {
+type ServerRequestModel interface {
 	InsertAdminServerRequest(ctx context.Context, serverRequest *model_struct.LocalAdminServerRequest) error
 	DeleteAdminServerRequest(ctx context.Context, serverID, userID string) error
 	UpdateAdminServerRequest(ctx context.Context, serverRequest *model_struct.LocalAdminServerRequest) error
@@ -290,6 +292,22 @@ type ServerModel interface {
 	DeleteServerRequest(ctx context.Context, serverID, userID string) error
 	UpdateServerRequest(ctx context.Context, serverRequest *model_struct.LocalServerRequest) error
 	GetSendServerApplication(ctx context.Context) ([]*model_struct.LocalServerRequest, error)
+}
+
+type ServerModel interface {
+	InsertServer(ctx context.Context, server *model_struct.LocalServer) error
+	DeleteServer(ctx context.Context, serverID string) error
+	UpdateServer(ctx context.Context, server *model_struct.LocalServer) error
+	GetServers(ctx context.Context, serverIDs []string) ([]*model_struct.LocalServer, error)
+	GetAllServers(ctx context.Context) ([]*model_struct.LocalServer, error)
+}
+
+type GroupCategoryModel interface {
+	InsertGroupCategory(ctx context.Context, category *model_struct.LocalGroupCategory) error
+	DeleteGroupCategory(ctx context.Context, categoryID string) error
+	UpdateGroupCategory(ctx context.Context, category *model_struct.LocalGroupCategory) error
+	GetGroupCategories(ctx context.Context, categoryIDs []string) ([]*model_struct.LocalGroupCategory, error)
+	GetGroupCategoriesByServer(ctx context.Context, serverIDs []string) ([]*model_struct.LocalGroupCategory, error)
 }
 
 type DataBase interface {
@@ -303,5 +321,7 @@ type DataBase interface {
 	ReactionModel
 	S3Model
 	SendingMessagesModel
+	ServerRequestModel
 	ServerModel
+	GroupCategoryModel
 }

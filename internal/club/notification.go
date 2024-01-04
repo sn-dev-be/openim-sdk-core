@@ -21,6 +21,7 @@ import (
 	"github.com/OpenIMSDK/protocol/sdkws"
 	"github.com/OpenIMSDK/tools/log"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/constant"
+	"github.com/openimsdk/openim-sdk-core/v3/pkg/utils"
 )
 
 func (c *Club) DoNotification(ctx context.Context, msg *sdkws.MsgData) {
@@ -32,11 +33,27 @@ func (c *Club) DoNotification(ctx context.Context, msg *sdkws.MsgData) {
 }
 
 func (c *Club) doNotification(ctx context.Context, msg *sdkws.MsgData) error {
+	log.ZInfo(ctx, "serverGroupChatType serverNotification 222222", "msg", msg)
+
 	if c.listener == nil {
 		return errors.New("listener is nil")
 	}
 	switch msg.ContentType {
 	case constant.ServerCreatedNotification:
+		log.ZInfo(ctx, "serverGroupChatType serverNotification 333333", "msg", msg)
+
+		var detail sdkws.ServerCreatedTips
+		if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
+			log.ZError(ctx, "serverGroupChatType serverNotification 444444", err)
+			return err
+		}
+		if err := c.SyncServer(ctx, []string{detail.Server.ServerID}); err != nil {
+			log.ZError(ctx, "serverGroupChatType serverNotification 555555", err)
+			return err
+		}
+		c.group.SyncAllJoinedGroupsAndMembers(ctx)
+		//c.SyncGroupCategoryByServer(ctx, []string{detail.Server.ServerID})
+
 	// case constant.GroupCreatedNotification: // 1501
 	// 	var detail sdkws.GroupCreatedTips
 	// 	if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {

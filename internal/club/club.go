@@ -3,6 +3,10 @@ package club
 import (
 	"context"
 
+	"github.com/OpenIMSDK/protocol/club"
+	"github.com/OpenIMSDK/protocol/sdkws"
+	"github.com/openimsdk/openim-sdk-core/v3/internal/group"
+	"github.com/openimsdk/openim-sdk-core/v3/internal/util"
 	"github.com/openimsdk/openim-sdk-core/v3/open_im_sdk_callback"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/common"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/constant"
@@ -15,13 +19,15 @@ import (
 func NewClub(
 	loginUserID string,
 	db db_interface.DataBase,
-	conversationCh chan common.Cmd2Value) *Club {
+	conversationCh chan common.Cmd2Value,
+	group *group.Group) *Club {
 	c := &Club{
 		loginUserID:    loginUserID,
 		db:             db,
 		conversationCh: conversationCh,
+		group:          group,
 	}
-	// c.initSyncer()
+	c.initSyncer()
 	return c
 }
 
@@ -38,6 +44,10 @@ type Club struct {
 
 	serverRequestSyncer      *syncer.Syncer[*model_struct.LocalServerRequest, [2]string]
 	serverAdminRequestSyncer *syncer.Syncer[*model_struct.LocalAdminServerRequest, [2]string]
+	serverSyncer             *syncer.Syncer[*model_struct.LocalServer, string]
+	groupCategorySyncer      *syncer.Syncer[*model_struct.LocalGroupCategory, string]
+
+	group *group.Group
 }
 
 func (c *Club) initSyncer() {
@@ -91,6 +101,26 @@ func (c *Club) initSyncer() {
 		return nil
 	})
 
+	c.serverSyncer = syncer.New(func(ctx context.Context, value *model_struct.LocalServer) error {
+		return c.db.InsertServer(ctx, value)
+	}, func(ctx context.Context, value *model_struct.LocalServer) error {
+		return c.db.DeleteServer(ctx, value.ServerID)
+	}, func(ctx context.Context, server, local *model_struct.LocalServer) error {
+		return c.db.UpdateServer(ctx, server)
+	}, func(value *model_struct.LocalServer) string {
+		return value.ServerID
+	}, nil, nil)
+
+	c.groupCategorySyncer = syncer.New(func(ctx context.Context, value *model_struct.LocalGroupCategory) error {
+		return c.db.InsertGroupCategory(ctx, value)
+	}, func(ctx context.Context, value *model_struct.LocalGroupCategory) error {
+		return c.db.DeleteGroupCategory(ctx, value.ServerID)
+	}, func(ctx context.Context, server, local *model_struct.LocalGroupCategory) error {
+		return c.db.UpdateGroupCategory(ctx, server)
+	}, func(value *model_struct.LocalGroupCategory) string {
+		return value.CategoryID
+	}, nil, nil)
+
 }
 
 func (c *Club) SetClubListener(callback open_im_sdk_callback.OnClubListener) {
@@ -102,4 +132,69 @@ func (c *Club) SetClubListener(callback open_im_sdk_callback.OnClubListener) {
 
 func (c *Club) SetListenerForService(listener open_im_sdk_callback.OnListenerForService) {
 	c.listenerForService = listener
+}
+
+func (c *Club) getServersInfoFromSvr(ctx context.Context, serverIDs []string) ([]*sdkws.ServerInfo, error) {
+	resp, err := util.CallApi[club.GetServersInfoResp](ctx, constant.GetServerInfoListRouter, &club.GetServersInfoReq{ServerIDs: serverIDs})
+	if err != nil {
+		return nil, err
+	}
+	servers := []*sdkws.ServerInfo{}
+	for _, serverResp := range resp.Servers {
+		servers = append(servers, serverResp.Server)
+	}
+	return servers, nil
+}
+
+func (c *Club) getGroupCategoriesFromSvr(ctx context.Context, categoryIDs []string) ([]*sdkws.GroupCategoryInfo, error) {
+	resp, err := util.CallApi[club.GetGroupCategoriesResp](ctx, constant.GetGroupCategoryListRouter, &club.GetGroupCategoriesReq{CategoryIDs: categoryIDs})
+	if err != nil {
+		return nil, err
+	}
+	return resp.GroupCategories, nil
+}
+
+func (c *Club) getGroupCategoriesFromSvrByServer(ctx context.Context, serverIDs []string) ([]*sdkws.GroupCategoryInfo, error) {
+	resp, err := util.CallApi[club.GetServersInfoResp](ctx, constant.GetServerInfoListRouter, &club.GetServersInfoReq{ServerIDs: serverIDs})
+	if err != nil {
+		return nil, err
+	}
+	categories := []*sdkws.GroupCategoryInfo{}
+	for _, serverResp := range resp.Servers {
+		for _, categoryResp := range serverResp.CategoryList {
+			categories = append(categories, categoryResp.CategoryInfo)
+		}
+	}
+	return categories, nil
+}
+
+func (c *Club) getGroupsFromSvrByServer(ctx context.Context, serverIDs []string) ([]*sdkws.GroupCategoryInfo, error) {
+	resp, err := util.CallApi[club.GetServersInfoResp](ctx, constant.GetServerInfoListRouter, &club.GetServersInfoReq{ServerIDs: serverIDs})
+	if err != nil {
+		return nil, err
+	}
+	categories := []*sdkws.GroupCategoryInfo{}
+	for _, serverResp := range resp.Servers {
+		for _, categoryResp := range serverResp.CategoryList {
+			categories = append(categories, categoryResp.CategoryInfo)
+		}
+	}
+	return categories, nil
+}
+
+func (c *Club) GetGroupsSvrByServer(ctx context.Context, serverIDs []string) ([]*sdkws.GroupInfo, error) {
+	resp, err := util.CallApi[club.GetGroupsByServerResp](ctx, constant.GetGroupsByServerRouter, &club.GetGroupsByServerReq{ServerIDs: serverIDs})
+	if err != nil {
+		return nil, err
+	}
+
+	return resp.GroupInfos, nil
+}
+
+func (c *Club) getJoinedServerList(ctx context.Context) ([]*sdkws.ServerInfo, error) {
+	resp, err := util.CallApi[club.GetJoinedServerListResp](ctx, constant.GetJoinedServerListRouter, &club.GetJoinedServerListReq{FromUserID: c.loginUserID, Pagination: &sdkws.RequestPagination{PageNumber: 1, ShowNumber: 1000}})
+	if err != nil {
+		return nil, err
+	}
+	return resp.Servers, nil
 }

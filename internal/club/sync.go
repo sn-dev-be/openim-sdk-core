@@ -5,6 +5,8 @@ import (
 
 	"github.com/OpenIMSDK/protocol/club"
 	"github.com/OpenIMSDK/protocol/sdkws"
+	"github.com/OpenIMSDK/tools/log"
+	"github.com/OpenIMSDK/tools/utils"
 	"github.com/openimsdk/openim-sdk-core/v3/internal/util"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/constant"
 )
@@ -54,4 +56,72 @@ func (c *Club) GetServerAdminServerApplicationList(ctx context.Context) ([]*sdkw
 	fn := func(resp *club.GetServerApplicationListResp) []*sdkws.ServerRequest { return resp.ServerRequests }
 	req := &club.GetServerApplicationListReq{FromUserID: c.loginUserID, Pagination: &sdkws.RequestPagination{}}
 	return util.GetPageAll(ctx, constant.GetRecvServerApplicationListRouter, req, fn)
+}
+
+func (c *Club) SyncServer(ctx context.Context, serverIDs []string) error {
+	log.ZInfo(ctx, "serverGroupChatType serverNotification 666666 serverIDs:", serverIDs)
+
+	list, err := c.getServersInfoFromSvr(ctx, serverIDs)
+	if err != nil {
+		log.ZError(ctx, "serverGroupChatType serverNotification 777777", err)
+		return err
+	}
+	localData, err := c.db.GetServers(ctx, serverIDs)
+	if err != nil {
+		log.ZError(ctx, "serverGroupChatType serverNotification 888888", err)
+		return err
+	}
+	if err := c.serverSyncer.Sync(ctx, util.Batch(ServerToLocalServer, list), localData, nil); err != nil {
+		log.ZError(ctx, "serverGroupChatType serverNotification 999999", err)
+		return err
+	}
+	return nil
+}
+
+func (c *Club) SyncGroupCategoryByID(ctx context.Context, categoryIDs []string) error {
+	list, err := c.getGroupCategoriesFromSvr(ctx, categoryIDs)
+	if err != nil {
+		return err
+	}
+	localData, err := c.db.GetGroupCategories(ctx, categoryIDs)
+	if err != nil {
+		return err
+	}
+	if err := c.groupCategorySyncer.Sync(ctx, util.Batch(ServerGroupCategoryToLocalGroupCategory, list), localData, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *Club) SyncGroupCategoryByServer(ctx context.Context, serverIDs []string) error {
+	list, err := c.getGroupCategoriesFromSvrByServer(ctx, serverIDs)
+	if err != nil {
+		return err
+	}
+	localData, err := c.db.GetGroupCategoriesByServer(ctx, serverIDs)
+	if err != nil {
+		return err
+	}
+	if err := c.groupCategorySyncer.Sync(ctx, util.Batch(ServerGroupCategoryToLocalGroupCategory, list), localData, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *Club) SyncJoinedServerList(ctx context.Context) error {
+	list, err := c.getJoinedServerList(ctx)
+	if err != nil {
+		return err
+	}
+	localData, err := c.db.GetAllServers(ctx)
+	if err != nil {
+		return err
+	}
+	if err := c.serverSyncer.Sync(ctx, util.Batch(ServerToLocalServer, list), localData, nil); err != nil {
+		return err
+	}
+
+	serverIDs := utils.Slice(list, func(e *sdkws.ServerInfo) string { return e.ServerID })
+	c.SyncGroupCategoryByServer(ctx, serverIDs)
+	return nil
 }

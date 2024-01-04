@@ -53,3 +53,41 @@ func ServerServerRequestToLocalAdminServerRequest(info *sdkws.ServerRequest) *mo
 		LocalServerRequest: *ServerServerRequestToLocalServerRequest(info),
 	}
 }
+
+func ServerToLocalServer(info *sdkws.ServerInfo) *model_struct.LocalServer {
+	return &model_struct.LocalServer{
+		ServerID:             info.ServerID,
+		ServerName:           info.ServerName,
+		Icon:                 info.Icon,
+		Description:          info.Description,
+		Banner:               info.Banner,
+		OwnerUserID:          info.OwnerUserID,
+		MemberNumber:         info.MemberNumber,
+		ApplyMode:            info.ApplyMode,
+		InviteMode:           info.InviteMode,
+		Searchable:           info.Searchable,
+		UserMutualAccessible: info.UserMutualAccessible,
+		Status:               info.Status,
+		CategoryNumber:       info.CategoryNumber,
+		GroupNumber:          info.GroupNumber,
+		Ex:                   info.Ex,
+		CreateTime:           info.CreateTime,
+		DappID:               info.DappID,
+		CommunityName:        info.CommunityName,
+		CommunityBanner:      info.Banner,
+		CommunityViewMode:    info.CommunityViewMode,
+	}
+}
+
+func ServerGroupCategoryToLocalGroupCategory(info *sdkws.GroupCategoryInfo) *model_struct.LocalGroupCategory {
+	return &model_struct.LocalGroupCategory{
+		CategoryID:    info.CategoryID,
+		CategoryName:  info.CategoryName,
+		ReorderWeight: info.ReorderWeight,
+		ViewMode:      info.ViewMode,
+		CategoryType:  info.CategoryType,
+		ServerID:      info.ServerID,
+		Ex:            info.Ex,
+		CreateTime:    info.CreateTime,
+	}
+}

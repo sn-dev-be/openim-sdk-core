@@ -134,6 +134,11 @@ const (
 	GetJoinedServerGroupListRouter     = RouterClub + "/get_joined_server_group_list"
 	GetRecvServerApplicationListRouter = RouterClub + "/get_recv_server_application_list"
 	GetSendServerApplicationListRouter = RouterClub + "/get_user_req_server_application_list"
+	GetServerInfoListRouter            = RouterClub + "/get_servers_info"
+	GetGroupCategoryListRouter         = RouterClub + "/get_categories"
+	GetGroupsByServerRouter            = RouterClub + "/get_groups_by_server"
+	GetJoinedServerListRouter          = RouterClub + "/get_joined_server_list"
+	CreateServerRouter                 = RouterClub + "/create_server"
 )
 const (
 	RouterGroup        = "/group"

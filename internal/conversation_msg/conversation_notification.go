@@ -686,7 +686,7 @@ func (c *Conversation) doNotificationNew(c2v common.Cmd2Value) {
 			c.user.SyncLoginUserInfo,
 			c.friend.SyncAllBlackList, c.friend.SyncAllFriendList, c.friend.SyncAllFriendApplication, c.friend.SyncAllSelfFriendApplication,
 			c.group.SyncAllJoinedGroupsAndMembers, c.group.SyncAllAdminGroupApplication, c.group.SyncAllSelfGroupApplication, c.group.SyncAllSavedGroupFromSrv,
-			// c.club.SyncAllAdminServerApplication, c.club.SyncAllSelfServerApplication,
+			c.club.SyncJoinedServerList,
 		} {
 			go func(syncFunc func(c context.Context) error) {
 				_ = syncFunc(ctx)
@@ -759,6 +759,7 @@ func (c *Conversation) doNotificationNew(c2v common.Cmd2Value) {
 					continue
 				}
 			case constant.ServerGroupChatType:
+				log.ZInfo(ctx, "serverGroupChatType serverNotification 111111", "contentType", v.ContentType)
 				if v.ContentType > constant.ServerNotificationBegin && v.ContentType < constant.ServerNotificationEnd {
 					c.club.DoNotification(ctx, v)
 				}

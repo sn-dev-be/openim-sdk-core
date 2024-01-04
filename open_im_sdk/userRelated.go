@@ -366,7 +366,7 @@ func (u *LoginMgr) login(ctx context.Context, userID, token string) error {
 		u.business.SetListener(u.businessListener)
 	}
 	u.signaling = signaling.NewSignaling(ctx, u.longConnMgr, u.db, u.signalingListener)
-	u.club = club.NewClub(u.loginUserID, u.db, u.conversationCh)
+	u.club = club.NewClub(u.loginUserID, u.db, u.conversationCh, u.group)
 	u.club.SetClubListener(u.clubListener)
 	u.third = third.NewThird(u.info.PlatformID, u.loginUserID, constant.SdkVersion, u.info.LogFilePath, u.file)
 	log.ZDebug(ctx, "forcedSynchronization success...", "login cost time: ", time.Since(t1))

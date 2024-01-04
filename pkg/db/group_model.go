@@ -21,6 +21,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/db/model_struct"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/utils"
 
@@ -117,4 +118,17 @@ func (d *DataBase) SubtractMemberCount(ctx context.Context, groupID string) erro
 	defer d.groupMtx.Unlock()
 	group := model_struct.LocalGroup{GroupID: groupID}
 	return utils.Wrap(d.conn.WithContext(ctx).Model(&group).Updates(map[string]interface{}{"member_count": gorm.Expr("member_count-1")}).Error, "")
+}
+
+func (d *DataBase) GetGroupsByServer(ctx context.Context, serverIDs []string) ([]*model_struct.LocalGroup, error) {
+	d.groupMtx.Lock()
+	defer d.groupMtx.Unlock()
+	var groupList []model_struct.LocalGroup
+	err := d.conn.WithContext(ctx).Where("server_id in (?)", serverIDs).Find(&groupList).Error
+	var transfer []*model_struct.LocalGroup
+	for _, v := range groupList {
+		v1 := v
+		transfer = append(transfer, &v1)
+	}
+	return transfer, utils.Wrap(err, "GetGroups failed ")
 }
