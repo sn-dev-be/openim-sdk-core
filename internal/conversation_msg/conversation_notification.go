@@ -751,6 +751,8 @@ func (c *Conversation) doNotificationNew(c2v common.Cmd2Value) {
 					c.group.DoNotification(ctx, v)
 				} else if v.ContentType > constant.SignalingNotificationBegin && v.ContentType < constant.SignalingNotificationEnd {
 					c.signaling.DoNotification(ctx, v)
+				} else if v.ContentType > constant.ServerNotificationBegin && v.ContentType < constant.ServerNotificationEnd {
+					c.club.DoNotification(ctx, v)
 				}
 			case constant.GroupChatType, constant.SuperGroupChatType:
 				if v.ContentType > constant.GroupNotificationBegin && v.ContentType < constant.GroupNotificationEnd {
@@ -759,7 +761,6 @@ func (c *Conversation) doNotificationNew(c2v common.Cmd2Value) {
 					continue
 				}
 			case constant.ServerGroupChatType:
-				log.ZInfo(ctx, "serverGroupChatType serverNotification 111111", "contentType", v.ContentType)
 				if v.ContentType > constant.ServerNotificationBegin && v.ContentType < constant.ServerNotificationEnd {
 					c.club.DoNotification(ctx, v)
 				}

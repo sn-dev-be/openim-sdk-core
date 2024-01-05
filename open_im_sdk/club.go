@@ -23,3 +23,7 @@ import "github.com/openimsdk/openim-sdk-core/v3/open_im_sdk_callback"
 func CreateServer(callback open_im_sdk_callback.Base, operationID string, serverReqInfo string) {
 	call(callback, operationID, UserForSDK.Club().CreateServer, serverReqInfo)
 }
+
+func JoinServer(callback open_im_sdk_callback.Base, operationID string, joinServerReq string) {
+	call(callback, operationID, UserForSDK.Club().JoinServer, joinServerReq)
+}

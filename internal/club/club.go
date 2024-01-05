@@ -182,15 +182,6 @@ func (c *Club) getGroupsFromSvrByServer(ctx context.Context, serverIDs []string)
 	return categories, nil
 }
 
-func (c *Club) GetGroupsSvrByServer(ctx context.Context, serverIDs []string) ([]*sdkws.GroupInfo, error) {
-	resp, err := util.CallApi[club.GetGroupsByServerResp](ctx, constant.GetGroupsByServerRouter, &club.GetGroupsByServerReq{ServerIDs: serverIDs})
-	if err != nil {
-		return nil, err
-	}
-
-	return resp.GroupInfos, nil
-}
-
 func (c *Club) getJoinedServerList(ctx context.Context) ([]*sdkws.ServerInfo, error) {
 	resp, err := util.CallApi[club.GetJoinedServerListResp](ctx, constant.GetJoinedServerListRouter, &club.GetJoinedServerListReq{FromUserID: c.loginUserID, Pagination: &sdkws.RequestPagination{PageNumber: 1, ShowNumber: 1000}})
 	if err != nil {

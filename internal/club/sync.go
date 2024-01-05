@@ -5,7 +5,6 @@ import (
 
 	"github.com/OpenIMSDK/protocol/club"
 	"github.com/OpenIMSDK/protocol/sdkws"
-	"github.com/OpenIMSDK/tools/log"
 	"github.com/OpenIMSDK/tools/utils"
 	"github.com/openimsdk/openim-sdk-core/v3/internal/util"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/constant"
@@ -59,23 +58,18 @@ func (c *Club) GetServerAdminServerApplicationList(ctx context.Context) ([]*sdkw
 }
 
 func (c *Club) SyncServer(ctx context.Context, serverIDs []string) error {
-	log.ZInfo(ctx, "serverGroupChatType serverNotification 666666 serverIDs:", serverIDs)
-
 	list, err := c.getServersInfoFromSvr(ctx, serverIDs)
 	if err != nil {
-		log.ZError(ctx, "serverGroupChatType serverNotification 777777", err)
 		return err
 	}
 	localData, err := c.db.GetServers(ctx, serverIDs)
 	if err != nil {
-		log.ZError(ctx, "serverGroupChatType serverNotification 888888", err)
 		return err
 	}
 	if err := c.serverSyncer.Sync(ctx, util.Batch(ServerToLocalServer, list), localData, nil); err != nil {
-		log.ZError(ctx, "serverGroupChatType serverNotification 999999", err)
 		return err
 	}
-	return nil
+	return c.SyncGroupCategoryByServer(ctx, serverIDs)
 }
 
 func (c *Club) SyncGroupCategoryByID(ctx context.Context, categoryIDs []string) error {

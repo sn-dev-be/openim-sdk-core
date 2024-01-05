@@ -71,3 +71,18 @@ func (c *Club) CreateServer(ctx context.Context, req *club.CreateServerReq) (str
 	}
 	return resp.ServerID, nil
 }
+
+func (c *Club) JoinServer(ctx context.Context, req *club.JoinServerReq) error {
+	if req.InviterUserID == "" {
+		req.InviterUserID = c.loginUserID
+	}
+	if req.ServerID == "" {
+		return sdkerrs.ErrArgs
+	}
+
+	_, err := util.CallApi[club.JoinServerResp](ctx, constant.JoinServerRouter, req)
+	if err != nil {
+		return err
+	}
+	return nil
+}

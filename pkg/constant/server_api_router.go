@@ -139,6 +139,7 @@ const (
 	GetGroupsByServerRouter            = RouterClub + "/get_groups_by_server"
 	GetJoinedServerListRouter          = RouterClub + "/get_joined_server_list"
 	CreateServerRouter                 = RouterClub + "/create_server"
+	JoinServerRouter                   = RouterClub + "/join_server"
 )
 const (
 	RouterGroup        = "/group"

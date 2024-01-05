@@ -33,26 +33,20 @@ func (c *Club) DoNotification(ctx context.Context, msg *sdkws.MsgData) {
 }
 
 func (c *Club) doNotification(ctx context.Context, msg *sdkws.MsgData) error {
-	log.ZInfo(ctx, "serverGroupChatType serverNotification 222222", "msg", msg)
 
 	if c.listener == nil {
 		return errors.New("listener is nil")
 	}
 	switch msg.ContentType {
 	case constant.ServerCreatedNotification:
-		log.ZInfo(ctx, "serverGroupChatType serverNotification 333333", "msg", msg)
-
 		var detail sdkws.ServerCreatedTips
 		if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
-			log.ZError(ctx, "serverGroupChatType serverNotification 444444", err)
 			return err
 		}
 		if err := c.SyncServer(ctx, []string{detail.Server.ServerID}); err != nil {
-			log.ZError(ctx, "serverGroupChatType serverNotification 555555", err)
 			return err
 		}
-		c.group.SyncAllJoinedGroupsAndMembers(ctx)
-		//c.SyncGroupCategoryByServer(ctx, []string{detail.Server.ServerID})
+		return c.group.SyncAllJoinedGroupsAndMembers(ctx)
 
 	// case constant.GroupCreatedNotification: // 1501
 	// 	var detail sdkws.GroupCreatedTips
@@ -80,17 +74,20 @@ func (c *Club) doNotification(ctx context.Context, msg *sdkws.MsgData) error {
 		// 	return c.SyncAdminServerApplications(ctx, detail.Server.ServerID)
 		// }
 	case constant.ServerApplicationAcceptedNotification:
-		// var detail sdkws.ServerApplicationAcceptedTips
-		// if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
-		// 	return err
-		// }
+		var detail sdkws.ServerApplicationAcceptedTips
+		if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
+			return err
+		}
 		// if detail.OpUser.UserID == c.loginUserID {
 		// 	return c.SyncAdminServerApplications(ctx, detail.Server.ServerID)
 		// }
 		// if detail.ReceiverAs == 1 {
 		// 	return c.SyncAdminServerApplications(ctx, detail.Server.ServerID)
 		// }
-		// return g.SyncGroups(ctx, detail.Group.GroupID)
+		if err := c.SyncServer(ctx, []string{detail.Server.ServerID}); err != nil {
+			return err
+		}
+		return c.group.SyncAllJoinedGroupsAndMembers(ctx)
 	case constant.ServerApplicationRejectedNotification:
 		// var detail sdkws.ServerApplicationRejectedTips
 		// if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
