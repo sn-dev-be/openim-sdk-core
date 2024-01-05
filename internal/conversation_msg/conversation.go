@@ -40,6 +40,7 @@ import (
 	"github.com/OpenIMSDK/protocol/sdkws"
 
 	pbConversation "github.com/OpenIMSDK/protocol/conversation"
+	pbCron "github.com/OpenIMSDK/protocol/cron"
 )
 
 func (c *Conversation) setConversation(ctx context.Context, apiReq *pbConversation.SetConversationsReq, localConversation *model_struct.LocalConversation) error {
@@ -80,6 +81,13 @@ func (c *Conversation) getServerHasReadAndMaxSeqs(ctx context.Context, conversat
 		return nil, err
 	}
 	return resp.Seqs, nil
+}
+
+func (c *Conversation) setConversationAutoDeleteMsg(ctx context.Context, apiReq *pbCron.SetClearMsgJobReq) error {
+	if err := util.ApiPost(ctx, constant.CronSetClearMsgJobRouter, apiReq, nil); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (c *Conversation) getAdvancedHistoryMessageList(ctx context.Context, req sdk.GetAdvancedHistoryMessageListParams, isReverse bool) (*sdk.GetAdvancedHistoryMessageListCallback, error) {

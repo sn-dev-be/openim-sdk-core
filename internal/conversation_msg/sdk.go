@@ -41,6 +41,7 @@ import (
 	"github.com/OpenIMSDK/tools/log"
 
 	pbConversation "github.com/OpenIMSDK/protocol/conversation"
+	pbCron "github.com/OpenIMSDK/protocol/cron"
 	"github.com/OpenIMSDK/protocol/sdkws"
 	"github.com/OpenIMSDK/protocol/wrapperspb"
 
@@ -196,6 +197,15 @@ func (c *Conversation) SetOneConversationBurnDuration(ctx context.Context, conve
 
 func (c *Conversation) SetOneConversationRecvMessageOpt(ctx context.Context, conversationID string, opt int) error {
 	return c.setConversationAndSync(ctx, conversationID, &pbConversation.ConversationReq{RecvMsgOpt: &wrapperspb.Int32Value{Value: int32(opt)}})
+}
+
+func (c *Conversation) SetConversationAutoDeleteMsg(ctx context.Context, conversationID string, cronCycle int) error {
+	lc, err := c.db.GetConversation(ctx, conversationID)
+	if err != nil {
+		return err
+	}
+	apiReq := &pbCron.SetClearMsgJobReq{ConversationID: lc.ConversationID, ConversationType: lc.ConversationType, CronCycle: int32(cronCycle)}
+	return c.setConversationAutoDeleteMsg(ctx, apiReq)
 }
 
 func (c *Conversation) GetTotalUnreadMsgCount(ctx context.Context) (totalUnreadCount int32, err error) {
@@ -889,8 +899,8 @@ func (c *Conversation) sendMessageToServer(
 			}
 			// log.Debug("", "remove file: ", v)
 		}
-		c.updateMsgStatusAndTriggerConversation(ctx, sendMsgResp.ClientMsgID, sendMsgResp.ServerMsgID, sendMsgResp.SendTime, constant.MsgStatusSendSuccess, s, lc)
 	}()
+	c.updateMsgStatusAndTriggerConversation(ctx, sendMsgResp.ClientMsgID, sendMsgResp.ServerMsgID, sendMsgResp.SendTime, constant.MsgStatusSendSuccess, s, lc)
 	return s, nil
 
 }

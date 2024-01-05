@@ -295,3 +295,7 @@ func UpdateMichoneStatus(callback open_im_sdk_callback.Base, operationID string,
 func UpdateSpeakStatuse(callback open_im_sdk_callback.Base, operationID string, channelID string) {
 	call(callback, operationID, UserForSDK.Signaling().SpeakStatusChange, channelID)
 }
+
+func SetConversationAutoDeleteMsg(callback open_im_sdk_callback.Base, operationID string, conversationID string, cronCycle int) {
+	call(callback, operationID, UserForSDK.Conversation().SetConversationAutoDeleteMsg, conversationID, cronCycle)
+}
