@@ -299,3 +299,7 @@ func UpdateSpeakStatuse(callback open_im_sdk_callback.Base, operationID string, 
 func SetConversationAutoDeleteMsg(callback open_im_sdk_callback.Base, operationID string, conversationID string, cronCycle int) {
 	call(callback, operationID, UserForSDK.Conversation().SetConversationAutoDeleteMsg, conversationID, cronCycle)
 }
+
+func GetConversationAutoDeleteMsgCycle(callback open_im_sdk_callback.Base, operationID string, conversationID string) {
+	call(callback, operationID, UserForSDK.Conversation().GetConversationAutoDeleteMsgCycle, conversationID)
+}

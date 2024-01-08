@@ -142,6 +142,7 @@ const (
 	JoinServerRouter                   = RouterClub + "/join_server"
 
 	CronSetClearMsgJobRouter = RouterCron + "/set_clear_msg_job"
+	CronGetClearMsgJobRouter = RouterCron + "/get_clear_msg_job"
 )
 const (
 	RouterGroup        = "/group"

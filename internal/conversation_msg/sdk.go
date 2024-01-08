@@ -208,6 +208,14 @@ func (c *Conversation) SetConversationAutoDeleteMsg(ctx context.Context, convers
 	return c.setConversationAutoDeleteMsg(ctx, apiReq)
 }
 
+func (c *Conversation) GetConversationAutoDeleteMsgCycle(ctx context.Context, conversationID string) (int32, error) {
+	lc, err := c.db.GetConversation(ctx, conversationID)
+	if err != nil {
+		return 0, err
+	}
+	return c.getConversationAutoDeleteMsgCycle(ctx, lc.ConversationID)
+}
+
 func (c *Conversation) GetTotalUnreadMsgCount(ctx context.Context) (totalUnreadCount int32, err error) {
 	return c.db.GetTotalUnreadMsgCountDB(ctx)
 }

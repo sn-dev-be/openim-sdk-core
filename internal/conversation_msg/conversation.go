@@ -90,6 +90,15 @@ func (c *Conversation) setConversationAutoDeleteMsg(ctx context.Context, apiReq 
 	return nil
 }
 
+func (c *Conversation) getConversationAutoDeleteMsgCycle(ctx context.Context, conversationID string) (int32, error) {
+	resp, err := util.CallApi[pbCron.GetClearMsgJobResp](ctx, constant.CronGetClearMsgJobRouter, pbCron.GetClearMsgJobReq{ConversationID: conversationID})
+	if err != nil {
+		return 0, err
+	}
+
+	return resp.CronCycle, nil
+}
+
 func (c *Conversation) getAdvancedHistoryMessageList(ctx context.Context, req sdk.GetAdvancedHistoryMessageListParams, isReverse bool) (*sdk.GetAdvancedHistoryMessageListCallback, error) {
 	t := time.Now()
 	var messageListCallback sdk.GetAdvancedHistoryMessageListCallback
