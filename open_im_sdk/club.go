@@ -27,3 +27,7 @@ func CreateServer(callback open_im_sdk_callback.Base, operationID string, server
 func JoinServer(callback open_im_sdk_callback.Base, operationID string, joinServerReq string) {
 	call(callback, operationID, UserForSDK.Club().JoinServer, joinServerReq)
 }
+
+func GetSpecifiedServersInfo(callback open_im_sdk_callback.Base, operationID string, serverIDList string) {
+	call(callback, operationID, UserForSDK.club.GetSpecifiedServersInfo, serverIDList)
+}

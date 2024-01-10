@@ -134,6 +134,15 @@ func LocalGroupToGroupInfoResp(info *model_struct.LocalGroup) *sdk_resp_models.G
 		ApplyMemberFriend:      info.ApplyMemberFriend,
 		NotificationUpdateTime: info.NotificationUpdateTime,
 		NotificationUserID:     info.NotificationUserID,
+		Condition:              info.Condition,
+		ConditionType:          info.ConditionType,
+		SyncMode:               info.SyncMode,
+		VisitorMode:            info.VisitorMode,
+		ViewMode:               info.ViewMode,
+		GroupMode:              info.GroupMode,
+		GroupCategoryID:        info.GroupCategoryID,
+		ServerID:               info.ServerID,
+		ReorderWeight:          info.ReorderWeight,
 		Saved:                  0, // 默认值为 0
 	}
 }

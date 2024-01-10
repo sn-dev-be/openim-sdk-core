@@ -33,5 +33,14 @@ type GroupInfoResp struct {
 	ApplyMemberFriend      int32  `json:"applyMemberFriend"`
 	NotificationUpdateTime int64  `json:"notificationUpdateTime"`
 	NotificationUserID     string `json:"notificationUserID"`
+	Condition              string `gorm:"column:condition"`
+	ConditionType          int32  `gorm:"column:condition_type"`
+	SyncMode               int32  `gorm:"column:sync_mode;default:0"`
+	VisitorMode            int32  `gorm:"column:visitor_mode;default:0"`
+	ViewMode               int32  `gorm:"column:view_mode;default:0"`
+	GroupMode              int32  `gorm:"column:group_mode;default:1"`
+	GroupCategoryID        string `gorm:"column:group_category_id;index;size:65"`
+	ServerID               string `gorm:"column:server_id;index;size:64"`
+	ReorderWeight          int32  `gorm:"column:reorder_weight;default:0"`
 	Saved                  int    `json:"saved"` // 新字段 saved
 }

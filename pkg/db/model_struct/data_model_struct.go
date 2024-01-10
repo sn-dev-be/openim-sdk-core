@@ -598,13 +598,30 @@ type LocalServer struct {
 	CommunityViewMode    int32  `gorm:"column:community_view_mode;"					       json:"communityViewMode"`
 }
 
+type LocalServerMember struct {
+	ID             uint64 `gorm:"column:id;primary_key;AUTO_INCREMENT;UNSIGNED"         json:"id"`
+	ServerID       string `gorm:"column:server_id;size:64"                  			json:"serverID"`
+	UserID         string `gorm:"column:user_id;size:64"                    			json:"userID"`
+	Nickname       string `gorm:"column:nickname;size:64"                         		json:"nickname"`
+	FaceURL        string `gorm:"column:user_server_face_url;size:255"`
+	ServerRoleID   string `gorm:"column:server_role_id;primary_key;size:64"             json:"serverRoleID"`
+	RoleLevel      int32  `gorm:"column:role_level"                                     json:"roleLevel"`
+	JoinSource     int32  `gorm:"column:join_source"                                    json:"joinSource"`
+	InviterUserID  string `gorm:"column:inviter_user_id;size:64"                        json:"inviterUserID"`
+	OperatorUserID string `gorm:"column:operator_user_id;size:64"`
+	ReorderWeight  int32  `gorm:"column:reorder_weight;default:0"                       json:"reorder_weight"`
+	MuteEndTime    int64  `gorm:"column:mute_end_time"                                  json:"muteEndTime"`
+	Ex             string `gorm:"column:ex;size:255"                                    json:"ex"`
+	JoinTime       int64  `gorm:"column:join_time"       								json:"joinTime"`
+}
+
 type LocalGroupCategory struct {
-	CategoryID    string `gorm:"column:category_id;primary_key;size:64"      json:"categoryID"           binding:"required"`
+	CategoryID    string `gorm:"column:category_id;primary_key;size:64"      			 json:"categoryID"`
 	CategoryName  string `gorm:"column:name;size:255"                                    json:"categoryName"`
 	ReorderWeight int32  `gorm:"column:reorder_weight"                                   json:"reorderWeight"`
 	ViewMode      int32  `gorm:"column:view_mode"                                        json:"viewMode"`
 	CategoryType  int32  `gorm:"column:category_type;default:1"                          json:"categoryType"`
 	ServerID      string `gorm:"column:server_id;primary_key;size:255"                   json:"serverID" binding:"required"`
 	Ex            string `gorm:"column:ex;size:255"                                      json:"ex"`
-	CreateTime    int64  `gorm:"column:create_time"     json:"createTime"`
+	CreateTime    int64  `gorm:"column:create_time"     								 json:"createTime"`
 }

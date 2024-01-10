@@ -19,9 +19,11 @@ import (
 
 	"github.com/openimsdk/openim-sdk-core/v3/internal/util"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/constant"
+	"github.com/openimsdk/openim-sdk-core/v3/pkg/db/model_struct"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/sdkerrs"
 
 	"github.com/OpenIMSDK/protocol/club"
+	"github.com/OpenIMSDK/tools/utils"
 )
 
 // // deprecated use CreateGroup
@@ -85,4 +87,31 @@ func (c *Club) JoinServer(ctx context.Context, req *club.JoinServerReq) error {
 		return err
 	}
 	return nil
+}
+
+func (c *Club) GetSpecifiedServersInfo(ctx context.Context, serverIDs []string) ([]*model_struct.LocalServer, error) {
+	serverList, err := c.db.GetServers(ctx, serverIDs)
+	if err != nil {
+		return nil, err
+	}
+
+	dbServerIDs := utils.Slice(serverList, func(s *model_struct.LocalServer) string { return s.ServerID })
+	missServerIDs := utils.SliceSub(serverIDs, dbServerIDs)
+	if len(missServerIDs) > 0 {
+		c.SyncServer(ctx, missServerIDs)
+		syncServerList, err := c.db.GetServers(ctx, missServerIDs)
+		if err != nil {
+			return nil, err
+		}
+		serverList = append(serverList, syncServerList...)
+	}
+	return serverList, nil
+}
+
+func (c *Club) GetJoinedServersInfo(ctx context.Context) ([]*model_struct.LocalServer, error) {
+	serverList, err := c.db.GetAllServers(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return serverList, nil
 }
