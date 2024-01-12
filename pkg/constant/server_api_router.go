@@ -140,6 +140,10 @@ const (
 	GetJoinedServerListRouter          = RouterClub + "/get_joined_server_list"
 	CreateServerRouter                 = RouterClub + "/create_server"
 	JoinServerRouter                   = RouterClub + "/join_server"
+	QuitServerRouter                   = RouterClub + "/quit_server"
+
+	SetServerMemberInfoRouter  = RouterClub + "/set_server_member_info"
+	GetServerMembersInfoRouter = RouterClub + "/get_server_members_info"
 
 	CronSetClearMsgJobRouter = RouterCron + "/set_clear_msg_job"
 	CronGetClearMsgJobRouter = RouterCron + "/get_clear_msg_job"

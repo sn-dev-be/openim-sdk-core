@@ -39,6 +39,14 @@ func (d *DataBase) DeleteGroup(ctx context.Context, groupID string) error {
 	localGroup := model_struct.LocalGroup{GroupID: groupID}
 	return utils.Wrap(d.conn.WithContext(ctx).Delete(&localGroup).Error, "DeleteGroup failed")
 }
+
+func (d *DataBase) DeleteGroupByServers(ctx context.Context, serverIDs []string) error {
+	d.groupMtx.Lock()
+	defer d.groupMtx.Unlock()
+	localGroup := model_struct.LocalGroup{}
+	return utils.Wrap(d.conn.WithContext(ctx).Where("server_id in (?)", serverIDs).Delete(&localGroup).Error, "DeleteGroup failed")
+}
+
 func (d *DataBase) UpdateGroup(ctx context.Context, groupInfo *model_struct.LocalGroup) error {
 	d.groupMtx.Lock()
 	defer d.groupMtx.Unlock()

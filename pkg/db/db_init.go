@@ -177,6 +177,7 @@ func (d *DataBase) initDB(ctx context.Context, logLevel int) error {
 		&model_struct.LocalServerRequest{},
 		&model_struct.LocalAdminServerRequest{},
 		&model_struct.LocalServer{},
+		&model_struct.LocalServerMember{},
 		&model_struct.LocalGroupCategory{},
 	)
 	if err != nil {

@@ -46,6 +46,7 @@ type Club struct {
 	serverAdminRequestSyncer *syncer.Syncer[*model_struct.LocalAdminServerRequest, [2]string]
 	serverSyncer             *syncer.Syncer[*model_struct.LocalServer, string]
 	groupCategorySyncer      *syncer.Syncer[*model_struct.LocalGroupCategory, string]
+	serverMemberSyncer       *syncer.Syncer[*model_struct.LocalServerMember, [2]string]
 
 	group *group.Group
 }
@@ -121,6 +122,16 @@ func (c *Club) initSyncer() {
 		return value.CategoryID
 	}, nil, nil)
 
+	c.serverMemberSyncer = syncer.New(func(ctx context.Context, value *model_struct.LocalServerMember) error {
+		return c.db.InsertServerMember(ctx, value)
+	}, func(ctx context.Context, value *model_struct.LocalServerMember) error {
+		return c.db.DeleteServerMemberByServer(ctx, value.ServerID)
+	}, func(ctx context.Context, server, local *model_struct.LocalServerMember) error {
+		return c.db.UpdateServerMember(ctx, server)
+	}, func(value *model_struct.LocalServerMember) [2]string {
+		return [...]string{value.ServerID, value.UserID}
+	}, nil, nil)
+
 }
 
 func (c *Club) SetClubListener(callback open_im_sdk_callback.OnClubListener) {
@@ -188,4 +199,16 @@ func (c *Club) getJoinedServerList(ctx context.Context) ([]*sdkws.ServerInfo, er
 		return nil, err
 	}
 	return resp.Servers, nil
+}
+
+func (c *Club) getServerMemberList(ctx context.Context, serverID string) ([]*sdkws.ServerMemberFullInfo, error) {
+	req := &club.GetServerMembersInfoReq{UserIDs: []string{c.loginUserID}}
+	if serverID != "" {
+		req.ServerID = serverID
+	}
+	resp, err := util.CallApi[club.GetServerMembersInfoResp](ctx, constant.GetServerMembersInfoRouter, req)
+	if err != nil {
+		return nil, err
+	}
+	return resp.Members, nil
 }

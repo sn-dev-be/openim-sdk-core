@@ -35,6 +35,13 @@ func (d *DataBase) DeleteGroupCategory(ctx context.Context, categoryID string) e
 	defer d.serverMtx.Unlock()
 	return utils.Wrap(d.conn.WithContext(ctx).Where("category_id=?", categoryID).Delete(&model_struct.LocalGroupCategory{}).Error, "DeleteGroupCategory failed")
 }
+
+func (d *DataBase) DeleteGroupCategoryByServers(ctx context.Context, serverIDs []string) error {
+	d.serverMtx.Lock()
+	defer d.serverMtx.Unlock()
+	return utils.Wrap(d.conn.WithContext(ctx).Where("server_id in (?)", serverIDs).Delete(&model_struct.LocalGroupCategory{}).Error, "DeleteGroupCategory failed")
+}
+
 func (d *DataBase) UpdateGroupCategory(ctx context.Context, groupCategory *model_struct.LocalGroupCategory) error {
 	d.serverMtx.Lock()
 	defer d.serverMtx.Unlock()
