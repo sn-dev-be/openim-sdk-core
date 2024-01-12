@@ -204,7 +204,13 @@ func (c *Conversation) SetConversationAutoDeleteMsg(ctx context.Context, convers
 	if err != nil {
 		return err
 	}
-	apiReq := &pbCron.SetClearMsgJobReq{ConversationID: lc.ConversationID, ConversationType: lc.ConversationType, CronCycle: int32(cronCycle)}
+	apiReq := &pbCron.SetClearMsgJobReq{
+		ConversationID:   lc.ConversationID,
+		ConversationType: lc.ConversationType,
+		UserID:           lc.UserID,
+		GroupID:          lc.GroupID,
+		CronCycle:        int32(cronCycle),
+	}
 	return c.setConversationAutoDeleteMsg(ctx, apiReq)
 }
 
