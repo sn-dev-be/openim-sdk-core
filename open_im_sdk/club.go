@@ -28,6 +28,14 @@ func JoinServer(callback open_im_sdk_callback.Base, operationID string, joinServ
 	call(callback, operationID, UserForSDK.Club().JoinServer, joinServerReq)
 }
 
+func QuitServer(callback open_im_sdk_callback.Base, operationID string, quitServerReq string) {
+	call(callback, operationID, UserForSDK.Club().QuitServer, quitServerReq)
+}
+
+func SetServerMemberInfo(callback open_im_sdk_callback.Base, operationID string, serverMembers string) {
+	call(callback, operationID, UserForSDK.Club().SetServerMemberInfo, serverMembers)
+}
+
 func GetSpecifiedServersInfo(callback open_im_sdk_callback.Base, operationID string, serverIDList string) {
 	call(callback, operationID, UserForSDK.club.GetSpecifiedServersInfo, serverIDList)
 }

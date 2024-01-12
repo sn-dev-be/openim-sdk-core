@@ -43,63 +43,87 @@ func (c *Club) doNotification(ctx context.Context, msg *sdkws.MsgData) error {
 		if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
 			return err
 		}
-		if err := c.SyncServer(ctx, []string{detail.Server.ServerID}); err != nil {
+		if err := c.SyncServer(ctx, []string{detail.Server.ServerID}, false); err != nil {
 			return err
 		}
 		return c.group.SyncAllJoinedGroupsAndMembers(ctx)
+	case constant.ServerDismissedNotification:
+		var detail sdkws.ServerDissmissedTips
+		if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
+			return err
+		}
+		return c.dismissServer(ctx, detail.ServerID)
 
-	// case constant.GroupCreatedNotification: // 1501
-	// 	var detail sdkws.GroupCreatedTips
-	// 	if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
-	// 		return err
-	// 	}
-	// 	if err := g.SyncGroups(ctx, detail.Group.GroupID); err != nil {
-	// 		return err
-	// 	}
-	// 	return g.SyncAllGroupMember(ctx, detail.Group.GroupID)
-	// case constant.GroupInfoSetNotification: // 1502
-	// 	var detail sdkws.GroupInfoSetTips
-	// 	if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
-	// 		return err
-	// 	}
-	// 	return g.SyncGroups(ctx, detail.Group.GroupID)
+	case constant.ServerInfoSetNotification:
+		var detail sdkws.ServerInfoSetTips
+		if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
+			return err
+		}
+		if err := c.SyncServer(ctx, []string{detail.Server.ServerID}, true); err != nil {
+			return err
+		}
+		//todo listener
+		return nil
 	case constant.JoinServerApplicationNotification:
-		// var detail sdkws.JoinServerApplicationTips
-		// if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
-		// 	return err
-		// }
-		// if detail.Applicant.UserID == c.loginUserID {
-		// 	return c.SyncSelfServerApplications(ctx, detail.Server.ServerID)
-		// } else {
-		// 	return c.SyncAdminServerApplications(ctx, detail.Server.ServerID)
-		// }
+
 	case constant.ServerApplicationAcceptedNotification:
 		var detail sdkws.ServerApplicationAcceptedTips
 		if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
 			return err
 		}
-		// if detail.OpUser.UserID == c.loginUserID {
-		// 	return c.SyncAdminServerApplications(ctx, detail.Server.ServerID)
-		// }
-		// if detail.ReceiverAs == 1 {
-		// 	return c.SyncAdminServerApplications(ctx, detail.Server.ServerID)
-		// }
-		if err := c.SyncServer(ctx, []string{detail.Server.ServerID}); err != nil {
+		if err := c.SyncServer(ctx, []string{detail.Server.ServerID}, false); err != nil {
 			return err
 		}
 		return c.group.SyncAllJoinedGroupsAndMembers(ctx)
 	case constant.ServerApplicationRejectedNotification:
-		// var detail sdkws.ServerApplicationRejectedTips
-		// if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
-		// 	return err
-		// }
-		// if detail.OpUser.UserID == c.loginUserID {
-		// 	return c.SyncAdminServerApplications(ctx, detail.Server.ServerID)
-		// }
-		// if detail.ReceiverAs == 1 {
-		// 	return c.SyncAdminServerApplications(ctx, detail.Server.ServerID)
-		// }
-		// return c.SyncSelfServerApplications(ctx, detail.Server.ServerID)
+
+	case constant.ServerMemberEnterNotification:
+
+	case constant.ServerMemberQuitNotification:
+		var detail sdkws.ServerMemberQuitTips
+		if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
+			return err
+		}
+		if err := c.dismissServer(ctx, detail.ServerID); err != nil {
+			return err
+		}
+		return nil
+	case constant.ServerMemberKickedNotification:
+		var detail sdkws.ServerMemberKickedTips
+		if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
+			return err
+		}
+		if err := c.dismissServer(ctx, detail.ServerID); err != nil {
+			return err
+		}
+		return nil
+	case constant.ServerMemberInfoSetNotification:
+		var detail sdkws.ServerMemberInfoSetTips
+		if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
+			return err
+		}
+		if err := c.SyncServerMemberByServer(ctx, []string{detail.ServerID}); err != nil {
+			return err
+		}
+		return nil
+	case constant.ServerMemberMutedNotification:
+		var detail sdkws.ServerMemberMutedTips
+		if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
+			return err
+		}
+		if err := c.SyncServerMemberByServer(ctx, []string{detail.ServerID}); err != nil {
+			return err
+		}
+		return nil
+	case constant.ServerMemberCancelMutedNotification:
+		var detail sdkws.ServerMemberCancelMutedTips
+		if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
+			return err
+		}
+		if err := c.SyncServerMemberByServer(ctx, []string{detail.ServerID}); err != nil {
+			return err
+		}
+		return nil
 	// case constant.GroupOwnerTransferredNotification: // 1507
 	// 	var detail sdkws.GroupOwnerTransferredTips
 	// 	if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {

@@ -91,3 +91,21 @@ func ServerGroupCategoryToLocalGroupCategory(info *sdkws.GroupCategoryInfo) *mod
 		CreateTime:    info.CreateTime,
 	}
 }
+
+func ServerMemberToLocalServerMember(info *sdkws.ServerMemberFullInfo) *model_struct.LocalServerMember {
+	return &model_struct.LocalServerMember{
+		ServerID:       info.ServerID,
+		UserID:         info.UserID,
+		Nickname:       info.Nickname,
+		FaceURL:        info.FaceURL,
+		ServerRoleID:   info.ServerRoleID,
+		RoleLevel:      info.RoleLevel,
+		JoinSource:     info.JoinSource,
+		InviterUserID:  info.InviterUserID,
+		OperatorUserID: info.OperatorUserID,
+		ReorderWeight:  info.ReorderWeight,
+		MuteEndTime:    info.MuteEndTime,
+		Ex:             info.Ex,
+		JoinTime:       info.JoinTime,
+	}
+}

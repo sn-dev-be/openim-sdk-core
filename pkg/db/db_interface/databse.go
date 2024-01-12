@@ -80,6 +80,7 @@ type GroupModel interface {
 	GetGroupSavedListSplit(ctx context.Context, offset, count int) ([]*model_struct.LocalGroupSaved, error)
 
 	GetGroupsByServer(ctx context.Context, serverIDs []string) ([]*model_struct.LocalGroup, error)
+	DeleteGroupByServers(ctx context.Context, serverIDs []string) error
 }
 
 type MessageModel interface {
@@ -302,9 +303,19 @@ type ServerModel interface {
 	GetAllServers(ctx context.Context) ([]*model_struct.LocalServer, error)
 }
 
+type ServerMemberModel interface {
+	InsertServerMember(ctx context.Context, members *model_struct.LocalServerMember) error
+	DeleteServerMember(ctx context.Context, id uint64) error
+	UpdateServerMember(ctx context.Context, member *model_struct.LocalServerMember) error
+	GetServerMembers(ctx context.Context, userID string) ([]*model_struct.LocalServerMember, error)
+	GetServerMemberByServerID(ctx context.Context, serverID string) (*model_struct.LocalServerMember, error)
+	DeleteServerMemberByServer(ctx context.Context, serverID string) error
+}
+
 type GroupCategoryModel interface {
 	InsertGroupCategory(ctx context.Context, category *model_struct.LocalGroupCategory) error
 	DeleteGroupCategory(ctx context.Context, categoryID string) error
+	DeleteGroupCategoryByServers(ctx context.Context, serverIDs []string) error
 	UpdateGroupCategory(ctx context.Context, category *model_struct.LocalGroupCategory) error
 	GetGroupCategories(ctx context.Context, categoryIDs []string) ([]*model_struct.LocalGroupCategory, error)
 	GetGroupCategoriesByServer(ctx context.Context, serverIDs []string) ([]*model_struct.LocalGroupCategory, error)
@@ -324,4 +335,5 @@ type DataBase interface {
 	ServerRequestModel
 	ServerModel
 	GroupCategoryModel
+	ServerMemberModel
 }

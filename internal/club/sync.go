@@ -8,6 +8,7 @@ import (
 	"github.com/OpenIMSDK/tools/utils"
 	"github.com/openimsdk/openim-sdk-core/v3/internal/util"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/constant"
+	"github.com/openimsdk/openim-sdk-core/v3/pkg/db/model_struct"
 )
 
 func (c *Club) SyncAllSelfServerApplication(ctx context.Context) error {
@@ -57,7 +58,7 @@ func (c *Club) GetServerAdminServerApplicationList(ctx context.Context) ([]*sdkw
 	return util.GetPageAll(ctx, constant.GetRecvServerApplicationListRouter, req, fn)
 }
 
-func (c *Club) SyncServer(ctx context.Context, serverIDs []string) error {
+func (c *Club) SyncServer(ctx context.Context, serverIDs []string, pureServer bool) error {
 	list, err := c.getServersInfoFromSvr(ctx, serverIDs)
 	if err != nil {
 		return err
@@ -69,6 +70,10 @@ func (c *Club) SyncServer(ctx context.Context, serverIDs []string) error {
 	if err := c.serverSyncer.Sync(ctx, util.Batch(ServerToLocalServer, list), localData, nil); err != nil {
 		return err
 	}
+	if pureServer {
+		return nil
+	}
+	c.SyncServerMemberByServer(ctx, serverIDs)
 	return c.SyncGroupCategoryByServer(ctx, serverIDs)
 }
 
@@ -117,5 +122,37 @@ func (c *Club) SyncJoinedServerList(ctx context.Context) error {
 
 	serverIDs := utils.Slice(list, func(e *sdkws.ServerInfo) string { return e.ServerID })
 	c.SyncGroupCategoryByServer(ctx, serverIDs)
+	return nil
+}
+
+func (c *Club) SyncSelfServerMemberList(ctx context.Context) error {
+	list, err := c.getServerMemberList(ctx, "")
+	if err != nil {
+		return err
+	}
+	localData, err := c.db.GetServerMembers(ctx, c.loginUserID)
+	if err != nil {
+		return err
+	}
+	if err := c.serverMemberSyncer.Sync(ctx, util.Batch(ServerMemberToLocalServerMember, list), localData, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *Club) SyncServerMemberByServer(ctx context.Context, serverIDs []string) error {
+	for _, serverID := range serverIDs {
+		list, err := c.getServerMemberList(ctx, serverID)
+		if err != nil {
+			return err
+		}
+		localData, err := c.db.GetServerMemberByServerID(ctx, serverID)
+		if err != nil {
+			return err
+		}
+		if err := c.serverMemberSyncer.Sync(ctx, util.Batch(ServerMemberToLocalServerMember, list), []*model_struct.LocalServerMember{localData}, nil); err != nil {
+			return err
+		}
+	}
 	return nil
 }
