@@ -125,7 +125,7 @@ func (c *Club) initSyncer() {
 	c.serverMemberSyncer = syncer.New(func(ctx context.Context, value *model_struct.LocalServerMember) error {
 		return c.db.InsertServerMember(ctx, value)
 	}, func(ctx context.Context, value *model_struct.LocalServerMember) error {
-		return c.db.DeleteServerMemberByServer(ctx, value.ServerID)
+		return c.db.DeleteServerMemberByServerIDAndUserID(ctx, value.ServerID, value.UserID)
 	}, func(ctx context.Context, server, local *model_struct.LocalServerMember) error {
 		return c.db.UpdateServerMember(ctx, server)
 	}, func(value *model_struct.LocalServerMember) [2]string {

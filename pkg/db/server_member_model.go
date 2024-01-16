@@ -37,10 +37,10 @@ func (d *DataBase) DeleteServerMember(ctx context.Context, id uint64) error {
 	return utils.Wrap(d.conn.WithContext(ctx).Where("id = ?", id).Delete(&model_struct.LocalServerMember{}).Error, "DeleteServerMember failed")
 }
 
-func (d *DataBase) DeleteServerMemberByServer(ctx context.Context, serverID string) error {
+func (d *DataBase) DeleteServerMemberByServerIDAndUserID(ctx context.Context, serverID, userID string) error {
 	d.serverMtx.Lock()
 	defer d.serverMtx.Unlock()
-	return utils.Wrap(d.conn.WithContext(ctx).Where("server_id = ?", serverID).Delete(&model_struct.LocalServerMember{}).Error, "DeleteServerMember failed")
+	return utils.Wrap(d.conn.WithContext(ctx).Where("server_id = ? and user_id = ?", serverID, userID).Delete(&model_struct.LocalServerMember{}).Error, "DeleteServerMember failed")
 }
 
 func (d *DataBase) UpdateServerMember(ctx context.Context, serverMember *model_struct.LocalServerMember) error {
@@ -53,11 +53,11 @@ func (d *DataBase) UpdateServerMember(ctx context.Context, serverMember *model_s
 	return utils.Wrap(t.Error, "")
 }
 
-func (d *DataBase) GetServerMemberByServerID(ctx context.Context, serverID string) (*model_struct.LocalServerMember, error) {
+func (d *DataBase) GetServerMemberByServerIDAndUserID(ctx context.Context, serverID, userID string) (*model_struct.LocalServerMember, error) {
 	d.serverMtx.Lock()
 	defer d.serverMtx.Unlock()
 	var serverMember model_struct.LocalServerMember
-	err := utils.Wrap(d.conn.WithContext(ctx).Where("server_id = ?", serverID).Order("join_time DESC").Find(&serverMember).Error, "")
+	err := utils.Wrap(d.conn.WithContext(ctx).Where("server_id = ? and user_id = ?", serverID, userID).Order("join_time DESC").Find(&serverMember).Error, "")
 	if err != nil {
 		return nil, utils.Wrap(err, "")
 	}

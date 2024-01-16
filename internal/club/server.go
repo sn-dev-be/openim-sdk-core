@@ -58,7 +58,7 @@ func (c *Club) GetJoinedServersInfo(ctx context.Context) ([]*model_struct.LocalS
 
 func (c *Club) dismissServer(ctx context.Context, serverID string) error {
 	c.db.DeleteServer(ctx, serverID)
-	c.db.DeleteServerMemberByServer(ctx, serverID)
+	c.db.DeleteServerMemberByServerIDAndUserID(ctx, serverID, c.loginUserID)
 	c.db.DeleteGroupCategoryByServers(ctx, []string{serverID})
 	c.db.DeleteGroupByServers(ctx, []string{serverID})
 

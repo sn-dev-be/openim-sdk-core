@@ -308,8 +308,9 @@ type ServerMemberModel interface {
 	DeleteServerMember(ctx context.Context, id uint64) error
 	UpdateServerMember(ctx context.Context, member *model_struct.LocalServerMember) error
 	GetServerMembers(ctx context.Context, userID string) ([]*model_struct.LocalServerMember, error)
-	GetServerMemberByServerID(ctx context.Context, serverID string) (*model_struct.LocalServerMember, error)
-	DeleteServerMemberByServer(ctx context.Context, serverID string) error
+	//GetServerMemberByServerID(ctx context.Context, serverID string) (*model_struct.LocalServerMember, error)
+	GetServerMemberByServerIDAndUserID(ctx context.Context, serverID, userID string) (*model_struct.LocalServerMember, error)
+	DeleteServerMemberByServerIDAndUserID(ctx context.Context, serverID, userID string) error
 }
 
 type GroupCategoryModel interface {
