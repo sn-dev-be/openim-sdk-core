@@ -34,7 +34,7 @@ func (c *Club) JoinServer(ctx context.Context, req *club.JoinServerReq) error {
 		return sdkerrs.ErrArgs
 	}
 
-	_, err := c.db.GetServerMemberByServerID(ctx, req.ServerID)
+	_, err := c.db.GetServerMemberByServerIDAndUserID(ctx, req.ServerID, c.loginUserID)
 	if err != nil {
 		return err
 	}
@@ -57,7 +57,7 @@ func (c *Club) QuitServer(ctx context.Context, req *club.QuitServerReq) error {
 		return sdkerrs.ErrArgs
 	}
 
-	_, err := c.db.GetServerMemberByServerID(ctx, req.ServerID)
+	_, err := c.db.GetServerMemberByServerIDAndUserID(ctx, req.ServerID, c.loginUserID)
 	if err != nil {
 		return err
 	}
