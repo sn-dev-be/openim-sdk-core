@@ -23,7 +23,7 @@ func (s *Signaling) doNotification(ctx context.Context, msg *sdkws.MsgData) erro
 	if s.listener == nil {
 		return errors.New("listener is nil")
 	}
-	tips := sdkws.SignalResp{}
+	tips := sdkws.SignalVoiceTips{}
 	if err := utils.UnmarshalNotificationElem(msg.Content, &tips); err != nil {
 		log.ZError(ctx, "comm.UnmarshalTips failed", err, "msg", msg.Content)
 		return err

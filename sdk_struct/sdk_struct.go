@@ -380,13 +380,13 @@ type MsgDeleteNotificationElem struct {
 }
 
 type SignalingStruct struct {
-	SendID           string           `json:"sendID,omitempty"`
-	SenderNickname   string           `json:"senderNickname,omitempty"`
-	SenderFaceURL    string           `json:"senderFaceURL,omitempty"`
-	MediaType        int32            `json:"mediaType,omitempty"`
-	SignalType       int32            `json:"signalType,omitempty"`
-	Content          string           `json:"content,omitempty"`
-	CreateTime       int64            `json:"createTime,omitempty"`
-	SenderPlatformID int32            `json:"senderPlatformID,omitempty"`
-	SignalReq        *sdkws.SignalReq `json:"signalReq,omitempty"`
+	SendID           string                `json:"sendID,omitempty"`
+	SenderNickname   string                `json:"senderNickname,omitempty"`
+	SenderFaceURL    string                `json:"senderFaceURL,omitempty"`
+	MediaType        int32                 `json:"mediaType,omitempty"`
+	SignalType       int32                 `json:"signalType,omitempty"`
+	Content          string                `json:"content,omitempty"`
+	CreateTime       int64                 `json:"createTime,omitempty"`
+	SenderPlatformID int32                 `json:"senderPlatformID,omitempty"`
+	SignalReq        *sdkws.SignalVoiceReq `json:"signalReq,omitempty"`
 }
