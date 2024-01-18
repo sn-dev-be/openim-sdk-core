@@ -356,12 +356,23 @@ func (c *Conversation) checkID(ctx context.Context, s *sdk_struct.MsgStruct,
 		}
 		s.GroupID = groupID
 		lc.GroupID = groupID
-		gm, err := c.db.GetGroupMemberInfoByGroupIDUserID(ctx, groupID, c.loginUserID)
-		if err == nil && gm != nil {
-			if gm.Nickname != "" {
-				s.SenderNickname = gm.Nickname
+
+		if g.GroupType == constant.ServerGroup {
+			sm, err := c.db.GetServerMemberByServerIDAndUserID(ctx, g.ServerID, c.loginUserID)
+			if err == nil && sm != nil {
+				if sm.Nickname != "" {
+					s.SenderNickname = sm.Nickname
+				}
+			}
+		} else {
+			gm, err := c.db.GetGroupMemberInfoByGroupIDUserID(ctx, groupID, c.loginUserID)
+			if err == nil && gm != nil {
+				if gm.Nickname != "" {
+					s.SenderNickname = gm.Nickname
+				}
 			}
 		}
+
 		var attachedInfo sdk_struct.AttachedInfoElem
 		attachedInfo.GroupHasReadInfo.GroupMemberCount = g.MemberCount
 		s.AttachedInfoElem = &attachedInfo

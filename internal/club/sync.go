@@ -146,7 +146,7 @@ func (c *Club) SyncServerMemberByServer(ctx context.Context, serverIDs []string)
 		if err != nil {
 			return err
 		}
-		localData, err := c.db.GetServerMemberByServerID(ctx, serverID)
+		localData, err := c.db.GetServerMemberByServerIDAndUserID(ctx, serverID, c.loginUserID)
 		if err != nil {
 			return err
 		}
