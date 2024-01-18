@@ -16,7 +16,6 @@ func (s *Signaling) initBasicInfo(
 	mediaType,
 	signalType int32,
 ) error {
-
 	m.CreateTime = utils.GetCurrentTimestampByMill()
 	m.SendID = s.loginUserID
 	m.SenderPlatformID = s.platformID
@@ -31,165 +30,122 @@ func (s *Signaling) initBasicInfo(
 	return nil
 }
 
-func (s *Signaling) SignalingInvite(ctx context.Context, userIDList []string) error {
-	req := sdkws.SignalReq{
-		FromUserID:    s.loginUserID,
-		ChannelID:     utils.GetMsgID(s.loginUserID),
-		InviteUsersID: userIDList,
-		SessionType:   constant.SingleChatType,
+func (s *Signaling) SignalingInvite(
+	ctx context.Context,
+	conversationID string,
+	userIDList []string,
+) error {
+	req := sdkws.SignalVoiceReq{
+		ConversationID: conversationID,
+		InviteUsersID:  userIDList,
 	}
-	m := sdk_struct.SignalingStruct{}
-	err := s.initBasicInfo(ctx, &m, constant.VoiceCall, constant.SignalingInviation)
-	if err != nil {
-		return err
-	}
-	m.SignalReq = &req
-	_, err = s.SendSignalMessage(ctx, &m)
+	_, err := s.SendVoiceSignal(ctx, constant.SignalingInviation, &req)
 	return err
 }
 
-func (s *Signaling) SignalingInviteInGroup(ctx context.Context, userIDList []string, groupID string) error {
-	req := sdkws.SignalReq{
-		FromUserID:    s.loginUserID,
-		ChannelID:     utils.GetMsgID(s.loginUserID),
-		InviteUsersID: userIDList,
-		SessionType:   constant.GroupChatType,
-		GroupID:       groupID,
+func (s *Signaling) SignalingAccept(
+	ctx context.Context,
+	conversationID string,
+	channelID string,
+) error {
+	req := sdkws.SignalVoiceReq{
+		ConversationID: conversationID,
+		ChannelID:      channelID,
 	}
-	m := sdk_struct.SignalingStruct{}
-	err := s.initBasicInfo(ctx, &m, constant.VoiceCall, constant.SignalingInviation)
-	if err != nil {
-		return err
-	}
-	m.SignalReq = &req
-	_, err = s.SendSignalMessage(ctx, &m)
+	_, err := s.SendVoiceSignal(ctx, constant.SignalingAccept, &req)
 	return err
 }
 
-func (s *Signaling) SignalingAccept(ctx context.Context, channelID string) error {
-	req := sdkws.SignalReq{
-		FromUserID: s.loginUserID,
-		ChannelID:  channelID,
+func (s *Signaling) SignalingReject(
+	ctx context.Context,
+	conversationID string,
+	channelID string,
+) error {
+	req := sdkws.SignalVoiceReq{
+		ConversationID: conversationID,
+		ChannelID:      channelID,
 	}
-	m := sdk_struct.SignalingStruct{}
-	err := s.initBasicInfo(ctx, &m, constant.VoiceCall, constant.SignalingAccept)
-	if err != nil {
-		return err
-	}
-	m.SignalReq = &req
-	_, err = s.SendSignalMessage(ctx, &m)
+	_, err := s.SendVoiceSignal(ctx, constant.SignalingReject, &req)
 	return err
 }
 
-func (s *Signaling) SignalingReject(ctx context.Context, channelID string, sessionType int32) error {
-	req := sdkws.SignalReq{
-		FromUserID:  s.loginUserID,
-		ChannelID:   channelID,
-		SessionType: sessionType,
+func (s *Signaling) SignalingJoin(
+	ctx context.Context,
+	conversationID string,
+	channelID string,
+) error {
+	req := sdkws.SignalVoiceReq{
+		ConversationID: conversationID,
+		ChannelID:      channelID,
 	}
-	m := sdk_struct.SignalingStruct{}
-	err := s.initBasicInfo(ctx, &m, constant.VoiceCall, constant.SignalingReject)
-	if err != nil {
-		return err
-	}
-	m.SignalReq = &req
-	_, err = s.SendSignalMessage(ctx, &m)
+	_, err := s.SendVoiceSignal(ctx, constant.SignalingJoin, &req)
 	return err
 }
 
-func (s *Signaling) SignalingJoin(ctx context.Context, channelID string, groupID string) error {
-	req := sdkws.SignalReq{
-		FromUserID:  s.loginUserID,
-		ChannelID:   channelID,
-		SessionType: constant.SuperGroupChatType,
-		GroupID:     groupID,
+func (s *Signaling) SignalingCancel(
+	ctx context.Context,
+	conversationID string,
+	channelID string,
+) error {
+	req := sdkws.SignalVoiceReq{
+		ConversationID: conversationID,
+		ChannelID:      channelID,
+		InviteUsersID:  []string{s.loginUserID},
 	}
-	m := sdk_struct.SignalingStruct{}
-	err := s.initBasicInfo(ctx, &m, constant.VoiceCall, constant.SignalingJoin)
-	if err != nil {
-		return err
-	}
-	m.SignalReq = &req
-	_, err = s.SendSignalMessage(ctx, &m)
+	_, err := s.SendVoiceSignal(ctx, constant.SignalingCancel, &req)
 	return err
 }
 
-func (s *Signaling) SignalingCancel(ctx context.Context, channelID string, sessionType int32, cancelUserID string) error {
-	req := sdkws.SignalReq{
-		FromUserID:    s.loginUserID,
-		ChannelID:     channelID,
-		SessionType:   sessionType,
-		InviteUsersID: []string{cancelUserID},
+func (s *Signaling) SignalingHungUp(
+	ctx context.Context,
+	conversationID string,
+	channelID string,
+) error {
+	req := sdkws.SignalVoiceReq{
+		ConversationID: conversationID,
+		ChannelID:      channelID,
 	}
-	m := sdk_struct.SignalingStruct{}
-	err := s.initBasicInfo(ctx, &m, constant.VoiceCall, constant.SignalingCancel)
-	if err != nil {
-		return err
-	}
-	m.SignalReq = &req
-	_, err = s.SendSignalMessage(ctx, &m)
+	_, err := s.SendVoiceSignal(ctx, constant.SignalingHungUp, &req)
 	return err
 }
 
-func (s *Signaling) SignalingHungUp(ctx context.Context, channelID string, sessionType int32) error {
-	req := sdkws.SignalReq{
-		FromUserID:  s.loginUserID,
-		ChannelID:   channelID,
-		SessionType: sessionType,
+func (s *Signaling) SignalingClose(
+	ctx context.Context,
+	conversationID string,
+	channelID string,
+) error {
+	req := sdkws.SignalVoiceReq{
+		ConversationID: conversationID,
+		ChannelID:      channelID,
 	}
-	m := sdk_struct.SignalingStruct{}
-	err := s.initBasicInfo(ctx, &m, constant.VoiceCall, constant.SignalingHungUp)
-	if err != nil {
-		return err
-	}
-	m.SignalReq = &req
-	_, err = s.SendSignalMessage(ctx, &m)
+	_, err := s.SendVoiceSignal(ctx, constant.SignalingClose, &req)
 	return err
 }
 
-func (s *Signaling) SignalingClose(ctx context.Context, channelID string, sessionType int32) error {
-	req := sdkws.SignalReq{
-		FromUserID:  s.loginUserID,
-		ChannelID:   channelID,
-		SessionType: sessionType,
-	}
-	m := sdk_struct.SignalingStruct{}
-	err := s.initBasicInfo(ctx, &m, constant.VoiceCall, constant.SignalingClose)
-	if err != nil {
-		return err
-	}
-	m.SignalReq = &req
-	_, err = s.SendSignalMessage(ctx, &m)
-	return err
-}
-
-func (s *Signaling) MichoneStatusChange(ctx context.Context, channelID string, status int32) error {
-	req := sdkws.SignalReq{
-		FromUserID:     s.loginUserID,
+func (s *Signaling) MichoneStatusChange(
+	ctx context.Context,
+	conversationID string,
+	channelID string,
+	status int32,
+) error {
+	req := sdkws.SignalVoiceReq{
+		ConversationID: conversationID,
 		ChannelID:      channelID,
 		MicphoneStatus: status,
 	}
-	m := sdk_struct.SignalingStruct{}
-	err := s.initBasicInfo(ctx, &m, constant.VoiceCall, constant.SignalingMicphoneStatusChange)
-	if err != nil {
-		return err
-	}
-	m.SignalReq = &req
-	_, err = s.SendSignalMessage(ctx, &m)
+	_, err := s.SendVoiceSignal(ctx, constant.SignalingMicphoneStatusChange, &req)
 	return err
 }
 
-func (s *Signaling) SpeakStatusChange(ctx context.Context, channelID string) error {
-	req := sdkws.SignalReq{
-		FromUserID: s.loginUserID,
-		ChannelID:  channelID,
+func (s *Signaling) SpeakStatusChange(
+	ctx context.Context,
+	conversationID string,
+	channelID string,
+) error {
+	req := sdkws.SignalVoiceReq{
+		ConversationID: conversationID,
+		ChannelID:      channelID,
 	}
-	m := sdk_struct.SignalingStruct{}
-	err := s.initBasicInfo(ctx, &m, constant.VoiceCall, constant.SignalingSpeakStatusChange)
-	if err != nil {
-		return err
-	}
-	m.SignalReq = &req
-	_, err = s.SendSignalMessage(ctx, &m)
+	_, err := s.SendVoiceSignal(ctx, constant.SignalingSpeakStatusChange, &req)
 	return err
 }

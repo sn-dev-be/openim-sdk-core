@@ -31,7 +31,6 @@ func NewSignaling(
 	db db_interface.DataBase,
 	listener open_im_sdk_callback.OnSignalingListener,
 ) *Signaling {
-
 	info := ccontext.Info(ctx)
 	s := &Signaling{
 		LongConnMgr: longConnMgr,
@@ -50,25 +49,38 @@ func (s *Signaling) SetSignalingListener(listener open_im_sdk_callback.OnSignali
 	s.listener = listener
 }
 
-func (s *Signaling) SendSignalMessage(
+func (s *Signaling) SendVoiceSignal(
 	ctx context.Context,
-	m *sdk_struct.SignalingStruct,
+	signalType int32,
+	voiceElem *sdkws.SignalVoiceReq,
 ) (*sdk_struct.SignalingStruct, error) {
-
-	// switch m.SignalType {
-	// case constant.SignalingInviation:
-	// default:
-	// 	return nil, sdkerrs.ErrMsgContentTypeNotSupport
-	// }
-	m.Content = utils.StructToJsonString(m.SignalReq)
-	return s.sendMessageToServer(ctx, m)
+	m := sdk_struct.SignalingStruct{}
+	if err := s.initBasicInfo(ctx, &m, constant.VoiceCall, signalType); err != nil {
+		return nil, err
+	}
+	conversation, err := s.db.GetConversation(ctx, voiceElem.ConversationID)
+	if err != nil {
+		log.ZError(ctx, "SendSignalMessage GetConversation err", err)
+		return nil, err
+	}
+	if voiceElem.ChannelID == "" {
+		voiceElem.ChannelID = utils.GetMsgID(voiceElem.ConversationID)
+	}
+	voiceElem.FromUserID = s.loginUserID
+	voiceElem.SessionType = conversation.ConversationType
+	if conversation.ConversationType == constant.GroupChatType {
+		voiceElem.GroupID = conversation.GroupID
+	}
+	m.Content = utils.StructToJsonString(voiceElem)
+	log.ZInfo(ctx, "send voice signal", "signalType", signalType, "userID", s.loginUserID)
+	return s.sendMessageToServer(ctx, &m)
 }
 
 func (s *Signaling) sendMessageToServer(
 	ctx context.Context,
 	m *sdk_struct.SignalingStruct,
 ) (*sdk_struct.SignalingStruct, error) {
-
+	log.ZDebug(ctx, "send signal msg", "data", m.Content)
 	var wsSignalData sdkws.SignalData
 	copier.Copy(&wsSignalData, m)
 	wsSignalData.Content = []byte(m.Content)
