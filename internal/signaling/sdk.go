@@ -36,15 +36,13 @@ func (s *Signaling) SignalingInvite(
 	ctx context.Context,
 	conversationID string,
 	userIDList []string,
-) (string, error) {
-	channelID := utils.GetMsgID(conversationID)
+) error {
 	req := sdkws.SignalVoiceReq{
 		ConversationID: conversationID,
 		InviteUsersID:  userIDList,
-		ChannelID:      channelID,
 	}
 	_, err := s.SendVoiceSignal(ctx, constant.SignalingInviation, &req)
-	return channelID, err
+	return err
 }
 
 func (s *Signaling) SignalingAccept(
@@ -90,12 +88,11 @@ func (s *Signaling) SignalingCancel(
 	ctx context.Context,
 	conversationID string,
 	channelID string,
-	canncelUserID string,
 ) error {
 	req := sdkws.SignalVoiceReq{
 		ConversationID: conversationID,
 		ChannelID:      channelID,
-		InviteUsersID:  []string{canncelUserID},
+		InviteUsersID:  []string{s.loginUserID},
 	}
 	_, err := s.SendVoiceSignal(ctx, constant.SignalingCancel, &req)
 	return err
