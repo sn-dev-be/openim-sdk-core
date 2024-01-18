@@ -63,6 +63,9 @@ func (s *Signaling) SendVoiceSignal(
 		log.ZError(ctx, "SendSignalMessage GetConversation err", err)
 		return nil, err
 	}
+	if voiceElem.ChannelID == "" {
+		voiceElem.ChannelID = utils.GetMsgID(voiceElem.ConversationID)
+	}
 	voiceElem.FromUserID = s.loginUserID
 	voiceElem.SessionType = conversation.ConversationType
 	if conversation.ConversationType == constant.GroupChatType {
