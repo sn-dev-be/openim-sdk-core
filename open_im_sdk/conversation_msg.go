@@ -272,8 +272,8 @@ func SignalingJoin(callback open_im_sdk_callback.Base, operationID string, conve
 	call(callback, operationID, UserForSDK.Signaling().SignalingJoin, conversationID, channelID)
 }
 
-func SignalingCancel(callback open_im_sdk_callback.Base, operationID string, conversationID string, channelID string) {
-	call(callback, operationID, UserForSDK.Signaling().SignalingCancel, conversationID, channelID)
+func SignalingCancel(callback open_im_sdk_callback.Base, operationID string, conversationID string, channelID string, cancelUserID string) {
+	call(callback, operationID, UserForSDK.Signaling().SignalingCancel, conversationID, channelID, cancelUserID)
 }
 
 func SignalingHungUp(callback open_im_sdk_callback.Base, operationID string, conversationID string, channelID string) {
