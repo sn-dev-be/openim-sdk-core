@@ -78,7 +78,16 @@ func (c *Club) doNotification(ctx context.Context, msg *sdkws.MsgData) error {
 	case constant.ServerApplicationRejectedNotification:
 
 	case constant.ServerMemberEnterNotification:
-
+		var detail sdkws.ServerMemberEnterTips
+		if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
+			return err
+		}
+		if detail.User.UserID == c.loginUserID {
+			if err := c.SyncServer(ctx, []string{detail.ServerID}, false); err != nil {
+				return err
+			}
+			return c.group.SyncAllJoinedGroupsAndMembers(ctx)
+		}
 	case constant.ServerMemberQuitNotification:
 		var detail sdkws.ServerMemberQuitTips
 		if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
