@@ -126,6 +126,7 @@ const (
 	FcmUpdateTokenRouter = RouterThird + "/fcm_update_token"
 	SetAppBadgeRouter    = RouterThird + "/set_app_badge"
 	UploadLogsRouter     = RouterThird + "/logs/upload"
+	GetRtcTokenRouter    = RouterThird + "/rtc/token"
 
 	// auth
 	GetUsersToken = RouterAuth + "/user_token"

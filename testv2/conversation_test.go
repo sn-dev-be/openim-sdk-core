@@ -293,11 +293,11 @@ func Test_MarkMsgsAsRead(t *testing.T) {
 
 func Test_SendImgMsg(t *testing.T) {
 	ctx = context.WithValue(ctx, "callback", TestSendMsg{})
-	msg, err := open_im_sdk.UserForSDK.Conversation().CreateImageMessage(ctx, "C:\\Users\\Admin\\Desktop\\test.png")
+	msg, err := open_im_sdk.UserForSDK.Conversation().CreateImageMessage(ctx, "1.WEBP")
 	if err != nil {
 		t.Fatal(err)
 	}
-	res, err := open_im_sdk.UserForSDK.Conversation().SendMessage(ctx, msg, "1919501984", "", nil)
+	res, err := open_im_sdk.UserForSDK.Conversation().SendMessage(ctx, msg, "30010", "", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -339,4 +339,18 @@ func Test_SendRedPacketMsg(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Logf("send redPacket => %v\n", res)
+}
+
+func Test_SendForwardMsg(t *testing.T) {
+	ctx = context.WithValue(ctx, "callback", TestSendMsg{})
+	m := &sdk_struct.MsgStruct{}
+	msg, err := open_im_sdk.UserForSDK.Conversation().CreateForwardMessage(ctx, m)
+	if err != nil {
+		t.Fatal(err)
+	}
+	res, err := open_im_sdk.UserForSDK.Conversation().SendMessage(ctx, msg, "10010", "", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Logf("send forward => %v\n", res)
 }

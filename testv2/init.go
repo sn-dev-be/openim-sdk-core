@@ -168,6 +168,10 @@ func (o *onConversationListener) OnTotalUnreadMessageCountChanged(totalUnreadCou
 	log.ZInfo(o.ctx, "OnTotalUnreadMessageCountChanged", "totalUnreadCount", totalUnreadCount)
 }
 
+func (o *onConversationListener) OnServerUnreadMessageCountChanged(serverID string, totalUnreadCount int32) {
+	log.ZInfo(o.ctx, "OnTotalUnreadMessageCountChanged", "serverID", serverID, "totalUnreadCount", totalUnreadCount)
+}
+
 type onGroupListener struct {
 	ctx context.Context
 }

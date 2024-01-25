@@ -128,7 +128,7 @@ const (
 	SignalingReject               = 3
 	SignalingJoin                 = 4
 	SignalingCancel               = 5
-	SignalingQuit                 = 6
+	SignalingHungUp               = 6
 	SignalingClose                = 7
 	SignalingMicphoneStatusChange = 8
 	SignalingSpeakStatusChange    = 9
