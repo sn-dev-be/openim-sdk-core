@@ -256,42 +256,6 @@ func SetMessageLocalEx(callback open_im_sdk_callback.Base, operationID string, c
 	call(callback, operationID, UserForSDK.Conversation().SetMessageLocalEx, conversationID, clientMsgID, localEx)
 }
 
-func SignalingInvite(callback open_im_sdk_callback.Base, operationID string, conversationID, userIDList string) {
-	call(callback, operationID, UserForSDK.Signaling().SignalingInvite, conversationID, userIDList)
-}
-
-func SignalingAccept(callback open_im_sdk_callback.Base, operationID string, conversationID string, channelID string) {
-	call(callback, operationID, UserForSDK.Signaling().SignalingAccept, conversationID, channelID)
-}
-
-func SignalingReject(callback open_im_sdk_callback.Base, operationID string, conversationID string, channelID string) {
-	call(callback, operationID, UserForSDK.Signaling().SignalingReject, conversationID, channelID)
-}
-
-func SignalingJoin(callback open_im_sdk_callback.Base, operationID string, conversationID string, channelID string) {
-	call(callback, operationID, UserForSDK.Signaling().SignalingJoin, conversationID, channelID)
-}
-
-func SignalingCancel(callback open_im_sdk_callback.Base, operationID string, conversationID string, channelID string, cancelUserID string) {
-	call(callback, operationID, UserForSDK.Signaling().SignalingCancel, conversationID, channelID, cancelUserID)
-}
-
-func SignalingHungUp(callback open_im_sdk_callback.Base, operationID string, conversationID string, channelID string) {
-	call(callback, operationID, UserForSDK.Signaling().SignalingHungUp, conversationID, channelID)
-}
-
-func SignalingClose(callback open_im_sdk_callback.Base, operationID string, conversationID string, channelID string) {
-	call(callback, operationID, UserForSDK.Signaling().SignalingClose, conversationID, channelID)
-}
-
-func UpdateMichoneStatus(callback open_im_sdk_callback.Base, operationID string, conversationID string, channelID string, status int) {
-	call(callback, operationID, UserForSDK.Signaling().MichoneStatusChange, conversationID, channelID, status)
-}
-
-func UpdateSpeakStatuse(callback open_im_sdk_callback.Base, operationID string, conversationID string, channelID string) {
-	call(callback, operationID, UserForSDK.Signaling().SpeakStatusChange, conversationID, channelID)
-}
-
 func SetConversationAutoDeleteMsg(callback open_im_sdk_callback.Base, operationID string, conversationID string, cronCycle int) {
 	call(callback, operationID, UserForSDK.Conversation().SetConversationAutoDeleteMsg, conversationID, cronCycle)
 }
