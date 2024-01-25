@@ -80,3 +80,11 @@ func Test_SignalingSpeakStatusChange(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+func Test_GetRtcToken(t *testing.T) {
+	ctx = context.WithValue(ctx, "callback", TestSendMsg{})
+	token, err := open_im_sdk.UserForSDK.Signaling().GetRtcToken(ctx, "1101", "test_channel", 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(token)
+}
