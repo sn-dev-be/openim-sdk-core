@@ -123,10 +123,11 @@ type RedPacketElem struct {
 }
 
 type PictureElem struct {
-	SourcePath      string           `json:"sourcePath,omitempty"`
-	SourcePicture   *PictureBaseInfo `json:"sourcePicture,omitempty"`
-	BigPicture      *PictureBaseInfo `json:"bigPicture,omitempty"`
-	SnapshotPicture *PictureBaseInfo `json:"snapshotPicture,omitempty"`
+	SourcePath         string           `json:"sourcePath,omitempty"`
+	SourcePicture      *PictureBaseInfo `json:"sourcePicture,omitempty"`
+	BigPicture         *PictureBaseInfo `json:"bigPicture,omitempty"`
+	SnapshotPicture    *PictureBaseInfo `json:"snapshotPicture,omitempty"`
+	PlaceholderPicture string           `json:"placeholderPicture,omitempty"`
 }
 
 type SoundElem struct {
@@ -139,19 +140,20 @@ type SoundElem struct {
 }
 
 type VideoElem struct {
-	VideoPath      string `json:"videoPath,omitempty"`
-	VideoUUID      string `json:"videoUUID,omitempty"`
-	VideoURL       string `json:"videoUrl,omitempty"`
-	VideoType      string `json:"videoType,omitempty"`
-	VideoSize      int64  `json:"videoSize"`
-	Duration       int64  `json:"duration"`
-	SnapshotPath   string `json:"snapshotPath,omitempty"`
-	SnapshotUUID   string `json:"snapshotUUID,omitempty"`
-	SnapshotSize   int64  `json:"snapshotSize"`
-	SnapshotURL    string `json:"snapshotUrl,omitempty"`
-	SnapshotWidth  int32  `json:"snapshotWidth"`
-	SnapshotHeight int32  `json:"snapshotHeight"`
-	SnapshotType   string `json:"snapshotType,omitempty"`
+	VideoPath           string `json:"videoPath,omitempty"`
+	VideoUUID           string `json:"videoUUID,omitempty"`
+	VideoURL            string `json:"videoUrl,omitempty"`
+	VideoType           string `json:"videoType,omitempty"`
+	VideoSize           int64  `json:"videoSize"`
+	Duration            int64  `json:"duration"`
+	SnapshotPath        string `json:"snapshotPath,omitempty"`
+	SnapshotUUID        string `json:"snapshotUUID,omitempty"`
+	SnapshotSize        int64  `json:"snapshotSize"`
+	SnapshotURL         string `json:"snapshotUrl,omitempty"`
+	SnapshotWidth       int32  `json:"snapshotWidth"`
+	SnapshotHeight      int32  `json:"snapshotHeight"`
+	SnapshotType        string `json:"snapshotType,omitempty"`
+	PlaceholderSnapshot string `json:"placeholderSnapshot,omitempty"`
 }
 
 type FileElem struct {

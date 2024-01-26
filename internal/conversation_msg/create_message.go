@@ -175,7 +175,7 @@ func (c *Conversation) CreateRedPacketMessage(ctx context.Context, redPacket *sd
 }
 
 func (c *Conversation) CreateVideoMessageFromFullPath(ctx context.Context, videoFullPath string, videoType string,
-	duration int64, snapshotFullPath string) (*sdk_struct.MsgStruct, error) {
+	duration int64, snapshotFullPath string, placeholderSnapshot string) (*sdk_struct.MsgStruct, error) {
 	dstFile := utils.FileTmpPath(videoFullPath, c.DataDir) //a->b
 	written, err := utils.CopyFile(videoFullPath, dstFile)
 	if err != nil {
@@ -200,9 +200,10 @@ func (c *Conversation) CreateVideoMessageFromFullPath(ctx context.Context, video
 		return nil, err
 	}
 	s.VideoElem = &sdk_struct.VideoElem{
-		VideoPath: videoFullPath,
-		VideoType: videoType,
-		Duration:  duration,
+		VideoPath:           videoFullPath,
+		VideoType:           videoType,
+		Duration:            duration,
+		PlaceholderSnapshot: placeholderSnapshot,
 	}
 	if snapshotFullPath == "" {
 		s.VideoElem.SnapshotPath = ""
@@ -253,7 +254,7 @@ func (c *Conversation) CreateFileMessageFromFullPath(ctx context.Context, fileFu
 	}
 	return &s, nil
 }
-func (c *Conversation) CreateImageMessageFromFullPath(ctx context.Context, imageFullPath string) (*sdk_struct.MsgStruct, error) {
+func (c *Conversation) CreateImageMessageFromFullPath(ctx context.Context, imageFullPath string, encodePlaceholderImage string) (*sdk_struct.MsgStruct, error) {
 	dstFile := utils.FileTmpPath(imageFullPath, c.DataDir) //a->b
 	_, err := utils.CopyFile(imageFullPath, dstFile)
 	if err != nil {
@@ -277,6 +278,7 @@ func (c *Conversation) CreateImageMessageFromFullPath(ctx context.Context, image
 			Height: imageInfo.Height,
 			Type:   imageInfo.Type,
 		},
+		PlaceholderPicture: encodePlaceholderImage,
 	}
 	return &s, nil
 }
