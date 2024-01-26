@@ -34,5 +34,7 @@ func ServerUserToLocalUser(user *sdkws.UserInfo) *model_struct.LocalUser {
 		AllowVibration:   user.AllowVibration,
 		AllowPushContent: user.AllowPushContent,
 		AllowOnlinePush:  user.AllowOnlinePush,
+		Language:         user.Language,
+		AllowStrangerMsg: user.AllowStrangerMsg,
 	}
 }

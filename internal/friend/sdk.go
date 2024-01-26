@@ -18,6 +18,7 @@ import (
 	"context"
 	"errors"
 
+	pbconstant "github.com/OpenIMSDK/protocol/constant"
 	"github.com/openimsdk/openim-sdk-core/v3/internal/util"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/constant"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/db/model_struct"
@@ -115,6 +116,7 @@ func (f *Friend) CheckFriend(ctx context.Context, friendUserIDList []string) ([]
 		var r server_api_params.UserIDResult
 		isBlack := false
 		isFriend := false
+		isFriendReverse := false
 		for _, b := range blackList {
 			if v == b.BlockUserID {
 				isBlack = true
@@ -127,14 +129,47 @@ func (f *Friend) CheckFriend(ctx context.Context, friendUserIDList []string) ([]
 				break
 			}
 		}
+
+		var resp friend.IsFriendResp
+		util.ApiPost(ctx, constant.IsFriendRouter, &friend.IsFriendReq{UserID1: f.loginUserID, UserID2: v}, &resp)
+		isFriendReverse = resp.InUser2Friends
+
 		r.UserID = v
-		if isFriend && !isBlack {
-			r.Result = 1
-		} else {
+		if isFriend && isBlack && !isFriendReverse {
 			r.Result = 0
+		} else if isFriend && !isBlack && !isFriendReverse {
+			r.Result = 1
+		} else if isFriendReverse {
+			r.Result = 2
 		}
 		res = append(res, &r)
 	}
+	return res, nil
+}
+
+func (f *Friend) AllowedSendMsg(ctx context.Context, userIDs []string) ([]int32, error) {
+	users, err := f.user.GetUsersInfo(ctx, userIDs)
+	if err != nil {
+		return nil, err
+	}
+
+	friendRelations, err := f.CheckFriend(ctx, userIDs)
+	if err != nil {
+		return nil, err
+	}
+	res := []int32{}
+	for _, relation := range friendRelations {
+		isAllowed := 1
+		if relation.Result < 2 {
+			for _, user := range users {
+				if relation.UserID == user.UserID && user.AllowStrangerMsg != pbconstant.NewMsgPushSettingAllowed {
+					res = append(res, 0)
+				}
+			}
+		}
+		res = append(res, int32(isAllowed))
+	}
+
 	return res, nil
 }
 
