@@ -119,8 +119,8 @@ func CreateRedPacketMessage(operationID string, redPacketInfo string) string {
 	return syncCall(operationID, UserForSDK.Conversation().CreateRedPacketMessage, redPacketInfo)
 }
 
-func CreateVideoMessageFromFullPath(operationID string, videoFullPath string, videoType string, duration int64, snapshotFullPath string) string {
-	return syncCall(operationID, UserForSDK.Conversation().CreateVideoMessageFromFullPath, videoFullPath, videoType, duration, snapshotFullPath)
+func CreateVideoMessageFromFullPath(operationID string, videoFullPath string, videoType string, duration int64, snapshotFullPath string, encodePlaceholderImage string) string {
+	return syncCall(operationID, UserForSDK.Conversation().CreateVideoMessageFromFullPath, videoFullPath, videoType, duration, snapshotFullPath, encodePlaceholderImage)
 }
 func CreateImageMessageFromFullPath(operationID string, imageFullPath string, encodePlaceholderImage string) string {
 	return syncCall(operationID, UserForSDK.Conversation().CreateImageMessageFromFullPath, imageFullPath, encodePlaceholderImage)
