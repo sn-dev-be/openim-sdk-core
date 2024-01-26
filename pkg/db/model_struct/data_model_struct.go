@@ -258,6 +258,8 @@ type LocalUser struct {
 	AllowVibration   int32  `gorm:"column:allow_vibration" json:"allowVibration"`
 	AllowPushContent int32  `gorm:"column:allow_push_content" json:"allowPushContent"`
 	AllowOnlinePush  int32  `gorm:"column:allow_online_push" json:"allowOnlinePush"`
+	AllowStrangerMsg int32  `gorm:"column:allow_stranger_msg" json:"allowStrangerMsg"`
+	Language         string `gorm:"column:language;size:64" json:"language"`
 }
 
 // message BlackInfo{

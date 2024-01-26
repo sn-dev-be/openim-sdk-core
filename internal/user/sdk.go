@@ -40,8 +40,8 @@ func (u *User) SetSelfInfo(ctx context.Context, userInfo *sdkws.UserInfo) error 
 	return u.updateSelfUserInfo(ctx, userInfo)
 }
 func (u *User) SetGlobalRecvMessageOpt(ctx context.Context, opt int32) error {
-	if err := util.ApiPost(ctx, constant.SetGlobalRecvMessageOptRouter,
-		&pbUser.SetGlobalRecvMessageOptReq{UserID: u.loginUserID, GlobalRecvMsgOpt: &wrapperspb.Int32Value{Value: opt}}, nil); err != nil {
+	if err := util.ApiPost(ctx, constant.SetUserSettingRouter,
+		&pbUser.SetUserSettingReq{UserID: u.loginUserID, GlobalRecvMsgOpt: &wrapperspb.Int32Value{Value: opt}}, nil); err != nil {
 		return err
 	}
 	u.SyncLoginUserInfo(ctx)
@@ -49,8 +49,8 @@ func (u *User) SetGlobalRecvMessageOpt(ctx context.Context, opt int32) error {
 }
 
 func (u *User) SetUserAllowBeep(ctx context.Context, opt int32) error {
-	if err := util.ApiPost(ctx, constant.SetGlobalRecvMessageOptRouter,
-		&pbUser.SetGlobalRecvMessageOptReq{UserID: u.loginUserID, AllowBeep: &wrapperspb.Int32Value{Value: opt}}, nil); err != nil {
+	if err := util.ApiPost(ctx, constant.SetUserSettingRouter,
+		&pbUser.SetUserSettingReq{UserID: u.loginUserID, AllowBeep: &wrapperspb.Int32Value{Value: opt}}, nil); err != nil {
 		return err
 	}
 	u.SyncLoginUserInfo(ctx)
@@ -58,8 +58,8 @@ func (u *User) SetUserAllowBeep(ctx context.Context, opt int32) error {
 }
 
 func (u *User) SetUserAllowVibration(ctx context.Context, opt int32) error {
-	if err := util.ApiPost(ctx, constant.SetGlobalRecvMessageOptRouter,
-		&pbUser.SetGlobalRecvMessageOptReq{UserID: u.loginUserID, AllowVibration: &wrapperspb.Int32Value{Value: opt}}, nil); err != nil {
+	if err := util.ApiPost(ctx, constant.SetUserSettingRouter,
+		&pbUser.SetUserSettingReq{UserID: u.loginUserID, AllowVibration: &wrapperspb.Int32Value{Value: opt}}, nil); err != nil {
 		return err
 	}
 	u.SyncLoginUserInfo(ctx)
@@ -67,8 +67,8 @@ func (u *User) SetUserAllowVibration(ctx context.Context, opt int32) error {
 }
 
 func (u *User) SetUserAllowPushContent(ctx context.Context, opt int32) error {
-	if err := util.ApiPost(ctx, constant.SetGlobalRecvMessageOptRouter,
-		&pbUser.SetGlobalRecvMessageOptReq{UserID: u.loginUserID, AllowPushContent: &wrapperspb.Int32Value{Value: opt}}, nil); err != nil {
+	if err := util.ApiPost(ctx, constant.SetUserSettingRouter,
+		&pbUser.SetUserSettingReq{UserID: u.loginUserID, AllowPushContent: &wrapperspb.Int32Value{Value: opt}}, nil); err != nil {
 		return err
 	}
 	u.SyncLoginUserInfo(ctx)
@@ -76,8 +76,26 @@ func (u *User) SetUserAllowPushContent(ctx context.Context, opt int32) error {
 }
 
 func (u *User) SetUserAllowOnlinePush(ctx context.Context, opt int32) error {
-	if err := util.ApiPost(ctx, constant.SetGlobalRecvMessageOptRouter,
-		&pbUser.SetGlobalRecvMessageOptReq{UserID: u.loginUserID, AllowOnlinePush: &wrapperspb.Int32Value{Value: opt}}, nil); err != nil {
+	if err := util.ApiPost(ctx, constant.SetUserSettingRouter,
+		&pbUser.SetUserSettingReq{UserID: u.loginUserID, AllowOnlinePush: &wrapperspb.Int32Value{Value: opt}}, nil); err != nil {
+		return err
+	}
+	u.SyncLoginUserInfo(ctx)
+	return nil
+}
+
+func (u *User) SetUserLanguage(ctx context.Context, language string) error {
+	if err := util.ApiPost(ctx, constant.SetUserSettingRouter,
+		&pbUser.SetUserSettingReq{UserID: u.loginUserID, Language: &wrapperspb.StringValue{Value: language}}, nil); err != nil {
+		return err
+	}
+	u.SyncLoginUserInfo(ctx)
+	return nil
+}
+
+func (u *User) SetUserAllowStrangerMsg(ctx context.Context, opt int32) error {
+	if err := util.ApiPost(ctx, constant.SetUserSettingRouter,
+		&pbUser.SetUserSettingReq{UserID: u.loginUserID, AllowStrangerMsg: &wrapperspb.Int32Value{Value: opt}}, nil); err != nil {
 		return err
 	}
 	u.SyncLoginUserInfo(ctx)

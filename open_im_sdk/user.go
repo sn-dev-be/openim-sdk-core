@@ -50,6 +50,12 @@ func SetUserAllowPushContent(callback open_im_sdk_callback.Base, operationID str
 func SetUserAllowOnlinePush(callback open_im_sdk_callback.Base, operationID string, opt int32) {
 	call(callback, operationID, UserForSDK.User().SetUserAllowOnlinePush, opt)
 }
+func SetUserAllowStrangerMsg(callback open_im_sdk_callback.Base, operationID string, opt int32) {
+	call(callback, operationID, UserForSDK.User().SetUserAllowStrangerMsg, opt)
+}
+func SetUserLanguage(callback open_im_sdk_callback.Base, operationID string, language string) {
+	call(callback, operationID, UserForSDK.User().SetUserLanguage, language)
+}
 
 // GetSelfUserInfo obtains the user's own information.
 func GetSelfUserInfo(callback open_im_sdk_callback.Base, operationID string) {

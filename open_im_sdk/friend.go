@@ -79,3 +79,7 @@ func RemoveBlack(callback open_im_sdk_callback.Base, operationID string, removeU
 func IsBeBlock(callback open_im_sdk_callback.Base, operationID string, owner_block_id string) {
 	call(callback, operationID, UserForSDK.Friend().IsBeBlock, owner_block_id)
 }
+
+func AllowedSendMsg(callback open_im_sdk_callback.Base, operationID string, targetUserID string) {
+	call(callback, operationID, UserForSDK.Friend().AllowedSendMsg, targetUserID)
+}

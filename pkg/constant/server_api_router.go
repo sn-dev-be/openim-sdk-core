@@ -18,7 +18,7 @@ const (
 	GetSelfUserInfoRouter         = "/user/get_self_user_info"
 	GetUsersInfoRouter            = "/user/get_users_info"
 	UpdateSelfUserInfoRouter      = "/user/update_user_info"
-	SetGlobalRecvMessageOptRouter = "/user/set_global_msg_recv_opt"
+	SetUserSettingRouter          = "/user/set_user_setting"
 	GetUsersInfoFromCacheRouter   = "/user/get_users_info_from_cache"
 	AccountCheck                  = "/user/account_check"
 	UserRegister                  = "/user/user_register"
@@ -33,6 +33,7 @@ const (
 	GetFriendApplicationListRouter     = "/friend/get_friend_apply_list"      //recv
 	GetSelfFriendApplicationListRouter = "/friend/get_self_friend_apply_list" //send
 	ImportFriendListRouter             = "/friend/import_friend"
+	IsFriendRouter                     = "/friend/is_friend"
 
 	GetDesignatedFriendsApplyRouter = "/friend/get_designated_friend_apply"
 	GetFriendListRouter             = "/friend/get_friend_list"
