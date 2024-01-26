@@ -162,8 +162,8 @@ func (f *Friend) AllowedSendMsg(ctx context.Context, userIDs []string) ([]int32,
 		isAllowed := 1
 		if relation.Result < 2 {
 			for _, user := range users {
-				if relation.UserID == user.UserID && user.AllowStrangerMsg != pbconstant.NewMsgPushSettingAllowed {
-					res = append(res, 0)
+				if relation.UserID == user.UserID && user.AllowStrangerMsg == pbconstant.NewMsgPushSettingAllowed {
+					isAllowed = 0
 				}
 			}
 		}
