@@ -167,5 +167,8 @@ func (s *Signaling) GetRtcToken(
 		RoleType:  roleType,
 	}
 	resp, err := util.CallApi[third.InitiateRtcTokenResp](ctx, constant.GetRtcTokenRouter, &req)
+	if err != nil {
+		return "", err
+	}
 	return resp.Token, err
 }
