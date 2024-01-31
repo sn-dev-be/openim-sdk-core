@@ -65,6 +65,7 @@ func (s *Signaling) SendVoiceSignal(
 	}
 	voiceElem.FromUserID = s.loginUserID
 	voiceElem.SessionType = conversation.ConversationType
+	voiceElem.ConversationID = conversation.ConversationID
 	if conversation.ConversationType == constant.GroupChatType {
 		voiceElem.GroupID = conversation.GroupID
 	}

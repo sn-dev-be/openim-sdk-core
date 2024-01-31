@@ -28,6 +28,9 @@ func (s *Signaling) doNotification(ctx context.Context, msg *sdkws.MsgData) erro
 		log.ZError(ctx, "comm.UnmarshalTips failed", err, "msg", msg.Content)
 		return err
 	}
+	if tips.OpUser == nil || tips.OpUser.UserID == s.loginUserID {
+		return nil
+	}
 	notificationMsg := utils.StructToJsonString(&tips)
 	switch msg.ContentType {
 	case constant.SignalingInvitedNotification:
