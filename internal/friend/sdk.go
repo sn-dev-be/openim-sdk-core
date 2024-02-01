@@ -116,7 +116,6 @@ func (f *Friend) CheckFriend(ctx context.Context, friendUserIDList []string) ([]
 		var r server_api_params.UserIDResult
 		isBlack := false
 		isFriend := false
-		isFriendReverse := false
 		for _, b := range blackList {
 			if v == b.BlockUserID {
 				isBlack = true
@@ -130,17 +129,33 @@ func (f *Friend) CheckFriend(ctx context.Context, friendUserIDList []string) ([]
 			}
 		}
 
+		r.UserID = v
+		if !isFriend || isBlack {
+			r.Result = 0
+		} else if isFriend && !isBlack {
+			r.Result = 1
+		}
+		res = append(res, &r)
+	}
+	return res, nil
+}
+
+func (f *Friend) CheckFriendReverse(ctx context.Context, friendUserIDList []string) ([]*server_api_params.UserIDResult, error) {
+	res := make([]*server_api_params.UserIDResult, 0, len(friendUserIDList))
+	for _, v := range friendUserIDList {
+		var r server_api_params.UserIDResult
+
+		isFriendReverse := false
 		var resp friend.IsFriendResp
 		util.ApiPost(ctx, constant.IsFriendRouter, &friend.IsFriendReq{UserID1: f.loginUserID, UserID2: v}, &resp)
 		isFriendReverse = resp.InUser2Friends
 
 		r.UserID = v
-		if isFriend && isBlack && !isFriendReverse {
-			r.Result = 0
-		} else if isFriend && !isBlack && !isFriendReverse {
+
+		if isFriendReverse {
 			r.Result = 1
-		} else if isFriendReverse {
-			r.Result = 2
+		} else if !isFriendReverse {
+			r.Result = 0
 		}
 		res = append(res, &r)
 	}
@@ -153,14 +168,14 @@ func (f *Friend) AllowedSendMsg(ctx context.Context, userIDs []string) ([]int32,
 		return nil, err
 	}
 
-	friendRelations, err := f.CheckFriend(ctx, userIDs)
+	friendRelations, err := f.CheckFriendReverse(ctx, userIDs)
 	if err != nil {
 		return nil, err
 	}
 	res := []int32{}
 	for _, relation := range friendRelations {
 		isAllowed := 1
-		if relation.Result < 2 {
+		if relation.Result == 0 {
 			for _, user := range users {
 				if relation.UserID == user.UserID && user.AllowStrangerMsg == pbconstant.NewMsgPushSettingAllowed {
 					isAllowed = 0
