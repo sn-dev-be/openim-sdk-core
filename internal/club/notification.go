@@ -133,6 +133,13 @@ func (c *Club) doNotification(ctx context.Context, msg *sdkws.MsgData) error {
 			return err
 		}
 		return nil
+	case constant.ServerGroupCreatedNotification:
+		var detail sdkws.ServerGroupCreatedTips
+		if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
+			return err
+		}
+
+		return c.group.SyncGroups(ctx, detail.Group.GroupID)
 	// case constant.GroupOwnerTransferredNotification: // 1507
 	// 	var detail sdkws.GroupOwnerTransferredTips
 	// 	if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
