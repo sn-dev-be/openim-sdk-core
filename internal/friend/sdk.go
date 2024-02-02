@@ -116,7 +116,6 @@ func (f *Friend) CheckFriend(ctx context.Context, friendUserIDList []string) ([]
 		var r server_api_params.UserIDResult
 		isBlack := false
 		isFriend := false
-		isFriendReverse := false
 		for _, b := range blackList {
 			if v == b.BlockUserID {
 				isBlack = true
@@ -157,10 +156,6 @@ func (f *Friend) CheckFriendReverse(ctx context.Context, friendUserIDList []stri
 			r.Result = 1
 		} else if !isFriendReverse {
 			r.Result = 0
-		} else if isFriend && !isBlack && !isFriendReverse {
-			r.Result = 1
-		} else if isFriendReverse {
-			r.Result = 2
 		}
 		res = append(res, &r)
 	}
