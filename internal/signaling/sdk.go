@@ -35,12 +35,15 @@ func (s *Signaling) initBasicInfo(
 func (s *Signaling) SignalingInvite(
 	ctx context.Context,
 	conversationID string,
-	userIDList []string,
+	userID string,
+	channelID string,
 ) (string, error) {
-	channelID := utils.GetMsgID(conversationID)
+	if channelID == "" {
+		channelID = utils.GetMsgID(conversationID)
+	}
 	req := sdkws.SignalVoiceReq{
 		ConversationID: conversationID,
-		InviteUsersID:  userIDList,
+		InviteUserID:   userID,
 		ChannelID:      channelID,
 	}
 	_, err := s.SendVoiceSignal(ctx, constant.SignalingInviation, &req)
@@ -95,7 +98,7 @@ func (s *Signaling) SignalingCancel(
 	req := sdkws.SignalVoiceReq{
 		ConversationID: conversationID,
 		ChannelID:      channelID,
-		InviteUsersID:  []string{canncelUserID},
+		InviteUserID:   canncelUserID,
 	}
 	_, err := s.SendVoiceSignal(ctx, constant.SignalingCancel, &req)
 	return err
