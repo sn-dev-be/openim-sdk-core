@@ -4,8 +4,8 @@ import (
 	"github.com/openimsdk/openim-sdk-core/v3/open_im_sdk_callback"
 )
 
-func SignalingInvite(callback open_im_sdk_callback.Base, operationID string, conversationID, userIDList string) {
-	call(callback, operationID, UserForSDK.Signaling().SignalingInvite, conversationID, userIDList)
+func SignalingInvite(callback open_im_sdk_callback.Base, operationID string, conversationID, userID string, channelID string) {
+	call(callback, operationID, UserForSDK.Signaling().SignalingInvite, conversationID, userID, channelID)
 }
 
 func SignalingAccept(callback open_im_sdk_callback.Base, operationID string, conversationID string, channelID string) {
