@@ -209,6 +209,7 @@ const (
 	ServerInfoSetNameNotification             = 1820
 	ServerDissmissedNotification              = 1821
 	ServerGroupCreatedNotification            = 1822
+	ServerGroupDismissNotification            = 1823
 
 	ServerNotificationEnd = 1899
 

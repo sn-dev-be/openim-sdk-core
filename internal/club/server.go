@@ -65,3 +65,18 @@ func (c *Club) dismissServer(ctx context.Context, serverID string) error {
 	//todo listener
 	return nil
 }
+
+func (c *Club) dismissServerGroup(ctx context.Context, serverID, groupID string) error {
+	err := c.db.DeleteGroup(ctx, groupID)
+	if err != nil {
+		return err
+	}
+
+	// totalUnreadCount, err := c.db.GetServerTotalUnreadCountByServerID(ctx, serverID)
+	// if err != nil {
+	// 	return err
+	// }
+	// c.conversationListener.OnServerUnreadMessageCountChanged(serverID, totalUnreadCount)
+	//
+	return nil
+}
