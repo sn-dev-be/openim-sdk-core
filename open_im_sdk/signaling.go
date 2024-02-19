@@ -32,7 +32,7 @@ func SignalingClose(callback open_im_sdk_callback.Base, operationID string, conv
 	call(callback, operationID, UserForSDK.Signaling().SignalingClose, conversationID, channelID)
 }
 
-func UpdateMichoneStatus(callback open_im_sdk_callback.Base, operationID string, conversationID string, channelID string, status int) {
+func UpdateMichoneStatus(callback open_im_sdk_callback.Base, operationID string, conversationID string, channelID string, status int32) {
 	call(callback, operationID, UserForSDK.Signaling().MichoneStatusChange, conversationID, channelID, status)
 }
 
