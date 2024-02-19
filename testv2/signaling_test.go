@@ -3,23 +3,24 @@ package testv2
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/openimsdk/openim-sdk-core/v3/open_im_sdk"
 )
 
 func Test_SignalingInvite(t *testing.T) {
 	ctx = context.WithValue(ctx, "callback", TestSendMsg{})
-	inviteUserIDs := []string{"6512ba81b6f8463c81a0ab6a"}
-	channelID, err := open_im_sdk.UserForSDK.Signaling().SignalingInvite(ctx, "sg_10010", inviteUserIDs)
+	channelID, err := open_im_sdk.UserForSDK.Signaling().SignalingInvite(ctx, "si_80010_90010", "90010", "")
 	if err != nil {
 		t.Fatal(err)
 	}
 	t.Log(channelID)
+	time.Sleep(time.Second * 5)
 }
 
 func Test_SignalingAccept(t *testing.T) {
 	ctx = context.WithValue(ctx, "callback", TestSendMsg{})
-	err := open_im_sdk.UserForSDK.Signaling().SignalingAccept(ctx, "94f3d1d5f39fc49b3496cdb379d0d3f3", "")
+	err := open_im_sdk.UserForSDK.Signaling().SignalingAccept(ctx, "si_80010_90010", "9ef9424a631146566958e4fd0eb459e5")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -27,15 +28,18 @@ func Test_SignalingAccept(t *testing.T) {
 
 func Test_SignalingReject(t *testing.T) {
 	ctx = context.WithValue(ctx, "callback", TestSendMsg{})
-	err := open_im_sdk.UserForSDK.Signaling().SignalingReject(ctx, "94f3d1d5f39fc49b3496cdb379d0d3f3", "")
-	if err != nil {
-		t.Fatal(err)
+	for i := 0; i < 1; i++ {
+		err := open_im_sdk.UserForSDK.Signaling().SignalingReject(ctx, "si_80010_90010", "bc49a112933babb9b5501b0936ed1276")
+		if err != nil {
+			t.Fatal(err)
+		}
 	}
+	time.Sleep(time.Second * 5)
 }
 
 func Test_SignalingJoin(t *testing.T) {
 	ctx = context.WithValue(ctx, "callback", TestSendMsg{})
-	err := open_im_sdk.UserForSDK.Signaling().SignalingJoin(ctx, "94f3d1d5f39fc49b3496cdb379d0d3f3", "")
+	err := open_im_sdk.UserForSDK.Signaling().SignalingJoin(ctx, "si_80010_90010", "94f3d1d5f39fc49b3496cdb379d0d3f3")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -43,15 +47,16 @@ func Test_SignalingJoin(t *testing.T) {
 
 func Test_SignalingCancel(t *testing.T) {
 	ctx = context.WithValue(ctx, "callback", TestSendMsg{})
-	err := open_im_sdk.UserForSDK.Signaling().SignalingCancel(ctx, "94f3d1d5f39fc49b3496cdb379d0d3f3", "", "10010")
+	err := open_im_sdk.UserForSDK.Signaling().SignalingCancel(ctx, "si_80010_90010", "97324170c11a67adc2f00fa03eda19a1", "90010")
 	if err != nil {
 		t.Fatal(err)
 	}
+	time.Sleep(time.Second * 5)
 }
 
 func Test_SignalingHungUp(t *testing.T) {
 	ctx = context.WithValue(ctx, "callback", TestSendMsg{})
-	err := open_im_sdk.UserForSDK.Signaling().SignalingHungUp(ctx, "94f3d1d5f39fc49b3496cdb379d0d3f3", "")
+	err := open_im_sdk.UserForSDK.Signaling().SignalingHungUp(ctx, "94f3d1d5f39fc49b3496cdb379d0d3f3", "", 1)
 	if err != nil {
 		t.Fatal(err)
 	}

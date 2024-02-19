@@ -24,8 +24,8 @@ func SignalingCancel(callback open_im_sdk_callback.Base, operationID string, con
 	call(callback, operationID, UserForSDK.Signaling().SignalingCancel, conversationID, channelID, cancelUserID)
 }
 
-func SignalingHungUp(callback open_im_sdk_callback.Base, operationID string, conversationID string, channelID string) {
-	call(callback, operationID, UserForSDK.Signaling().SignalingHungUp, conversationID, channelID)
+func SignalingHungUp(callback open_im_sdk_callback.Base, operationID string, conversationID string, channelID string, hungUpType int32) {
+	call(callback, operationID, UserForSDK.Signaling().SignalingHungUp, conversationID, channelID, hungUpType)
 }
 
 func SignalingClose(callback open_im_sdk_callback.Base, operationID string, conversationID string, channelID string) {

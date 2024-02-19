@@ -108,10 +108,12 @@ func (s *Signaling) SignalingHungUp(
 	ctx context.Context,
 	conversationID string,
 	channelID string,
+	hungUpType int32,
 ) error {
 	req := sdkws.SignalVoiceReq{
 		ConversationID: conversationID,
 		ChannelID:      channelID,
+		HungUpType:     hungUpType,
 	}
 	_, err := s.SendVoiceSignal(ctx, constant.SignalingHungUp, &req)
 	return err

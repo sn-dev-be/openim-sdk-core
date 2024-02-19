@@ -36,7 +36,7 @@ func Test_GetSpecifiedFriendsInfo(t *testing.T) {
 
 func Test_AddFriend(t *testing.T) {
 	err := open_im_sdk.UserForSDK.Friend().AddFriend(ctx, &friend2.ApplyToAddFriendReq{
-		ToUserID: "45644221123",
+		ToUserID: "11010",
 		ReqMsg:   "test add",
 	})
 	if err != nil {
@@ -97,7 +97,7 @@ func Test_CheckFriend(t *testing.T) {
 }
 
 func Test_DeleteFriend(t *testing.T) {
-	err := open_im_sdk.UserForSDK.Friend().DeleteFriend(ctx, "863454357")
+	err := open_im_sdk.UserForSDK.Friend().DeleteFriend(ctx, "11010")
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -123,6 +123,9 @@ const (
 	VoiceCall = 1
 	VideoCall = 2
 
+	HungUpWithNormal = 1
+	HungUpWithError  = 2
+
 	SignalingInviation            = 1
 	SignalingAccept               = 2
 	SignalingReject               = 3

@@ -61,7 +61,7 @@ func Test_CreateAdvancedQuoteMessage(t *testing.T) {
 }
 
 func Test_CreateVideoMessageFromFullPath(t *testing.T) {
-	message, err := open_im_sdk.UserForSDK.Conversation().CreateVideoMessageFromFullPath(ctx, ".\\test.png", "mp4", 10, ".\\test.png")
+	message, err := open_im_sdk.UserForSDK.Conversation().CreateVideoMessageFromFullPath(ctx, ".\\test.png", "mp4", 10, ".\\test.png", "base64://")
 	if err != nil {
 		t.Error(err)
 	}
