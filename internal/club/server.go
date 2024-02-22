@@ -78,5 +78,7 @@ func (c *Club) dismissServerGroup(ctx context.Context, serverID, groupID string)
 	// }
 	// c.conversationListener.OnServerUnreadMessageCountChanged(serverID, totalUnreadCount)
 	//
+
+	c.listener.OnServerGroupDismissed(groupID)
 	return nil
 }

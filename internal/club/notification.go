@@ -96,14 +96,21 @@ func (c *Club) doNotification(ctx context.Context, msg *sdkws.MsgData) error {
 		if err := c.dismissServer(ctx, detail.ServerID); err != nil {
 			return err
 		}
+		c.listener.OnServerDismissed(detail.ServerID)
 		return nil
 	case constant.ServerMemberKickedNotification:
 		var detail sdkws.ServerMemberKickedTips
 		if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
 			return err
 		}
-		if err := c.dismissServer(ctx, detail.ServerID); err != nil {
-			return err
+
+		for _, kickedUserID := range detail.MemberUserIDList {
+			if c.loginUserID == kickedUserID {
+				if err := c.dismissServer(ctx, detail.ServerID); err != nil {
+					return err
+				}
+				c.listener.OnServerMemberKicked(detail.ServerID)
+			}
 		}
 		return nil
 	case constant.ServerMemberInfoSetNotification:

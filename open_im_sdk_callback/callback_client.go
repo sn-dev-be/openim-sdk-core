@@ -141,17 +141,19 @@ type OnSignalingListener interface {
 }
 
 type OnClubListener interface {
-	OnJoinedClubAdded(clubInfo string)
-	OnJoinedClubDeleted(clubInfo string)
-	OnClubMemberAdded(clubMemberInfo string)
-	OnClubMemberDeleted(clubMemberInfo string)
-	OnClubApplicationAdded(clubApplication string)
-	OnClubApplicationDeleted(clubApplication string)
-	OnClubInfoChanged(clubInfo string)
-	OnClubDismissed(clubInfo string)
-	OnClubMemberInfoChanged(clubMemberInfo string)
-	OnClubApplicationAccepted(clubApplication string)
-	OnClubApplicationRejected(clubApplication string)
+	OnJoinedServerAdded(serverInfo string)
+	OnJoinedServerDeleted(serverInfo string)
+	OnServerMemberAdded(serverMemberInfo string)
+	OnServerMemberDeleted(serverMemberInfo string)
+	OnServerApplicationAdded(serverApplication string)
+	OnServerApplicationDeleted(serverApplication string)
+	OnServerInfoChanged(serverInfo string)
+	OnServerDismissed(serverInfo string)
+	OnServerMemberInfoChanged(serverMemberInfo string)
+	OnServerApplicationAccepted(serverApplication string)
+	OnServerApplicationRejected(serverApplication string)
+	OnServerGroupDismissed(groupInfo string)
+	OnServerMemberKicked(serverInfo string)
 }
 
 type UploadFileCallback interface {

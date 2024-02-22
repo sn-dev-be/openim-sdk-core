@@ -63,15 +63,15 @@ func (c *Club) initSyncer() {
 	}, nil, func(ctx context.Context, state int, server, local *model_struct.LocalServerRequest) error {
 		switch state {
 		case syncer.Insert:
-			c.listener.OnClubApplicationAdded(utils.StructToJsonString(server))
+			c.listener.OnServerApplicationAdded(utils.StructToJsonString(server))
 		case syncer.Update:
 			switch server.HandleResult {
 			case constant.FriendResponseAgree:
-				c.listener.OnClubApplicationAccepted(utils.StructToJsonString(server))
+				c.listener.OnServerApplicationAccepted(utils.StructToJsonString(server))
 			case constant.FriendResponseRefuse:
-				c.listener.OnClubApplicationRejected(utils.StructToJsonString(server))
+				c.listener.OnServerApplicationRejected(utils.StructToJsonString(server))
 			default:
-				c.listener.OnClubApplicationAdded(utils.StructToJsonString(server))
+				c.listener.OnServerApplicationAdded(utils.StructToJsonString(server))
 			}
 		}
 		return nil
@@ -88,15 +88,15 @@ func (c *Club) initSyncer() {
 	}, nil, func(ctx context.Context, state int, server, local *model_struct.LocalAdminServerRequest) error {
 		switch state {
 		case syncer.Insert:
-			c.listener.OnClubApplicationAdded(utils.StructToJsonString(server))
+			c.listener.OnServerApplicationAdded(utils.StructToJsonString(server))
 		case syncer.Update:
 			switch server.HandleResult {
 			case constant.FriendResponseAgree:
-				c.listener.OnClubApplicationAccepted(utils.StructToJsonString(server))
+				c.listener.OnServerApplicationAccepted(utils.StructToJsonString(server))
 			case constant.FriendResponseRefuse:
-				c.listener.OnClubApplicationRejected(utils.StructToJsonString(server))
+				c.listener.OnServerApplicationRejected(utils.StructToJsonString(server))
 			default:
-				c.listener.OnClubApplicationAdded(utils.StructToJsonString(server))
+				c.listener.OnServerApplicationAdded(utils.StructToJsonString(server))
 			}
 		}
 		return nil
