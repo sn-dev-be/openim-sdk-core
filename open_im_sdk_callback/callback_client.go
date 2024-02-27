@@ -148,12 +148,12 @@ type OnClubListener interface {
 	OnServerApplicationAdded(serverApplication string)
 	OnServerApplicationDeleted(serverApplication string)
 	OnServerInfoChanged(serverInfo string)
-	OnServerDismissed(serverInfo string)
+	OnServerDismissed(serverID string)
 	OnServerMemberInfoChanged(serverMemberInfo string)
 	OnServerApplicationAccepted(serverApplication string)
 	OnServerApplicationRejected(serverApplication string)
 	OnServerGroupDismissed(groupInfo string)
-	OnServerMemberKicked(serverInfo string)
+	OnServerMemberKicked(serverID string)
 }
 
 type UploadFileCallback interface {

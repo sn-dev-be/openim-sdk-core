@@ -15,6 +15,7 @@ package club
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -152,6 +153,15 @@ func (c *Club) doNotification(ctx context.Context, msg *sdkws.MsgData) error {
 		if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
 			return err
 		}
+		group, err := c.db.GetGroupInfoByGroupID(ctx, detail.GroupID)
+		if err != nil {
+			return err
+		}
+		data, err := json.Marshal(group)
+		if err != nil {
+			return err
+		}
+		c.listener.OnServerGroupDismissed(string(data))
 		return c.dismissServerGroup(ctx, detail.ServerID, detail.GroupID)
 
 		//return c.group.SyncGroups(ctx, detail.Group.GroupID)

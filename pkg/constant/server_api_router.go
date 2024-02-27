@@ -143,6 +143,7 @@ const (
 	CreateServerRouter                 = RouterClub + "/create_server"
 	JoinServerRouter                   = RouterClub + "/join_server"
 	QuitServerRouter                   = RouterClub + "/quit_server"
+	ServerApplicationResponseRouter    = RouterClub + "/server_application_response"
 
 	SetServerMemberInfoRouter  = RouterClub + "/set_server_member_info"
 	GetServerMembersInfoRouter = RouterClub + "/get_server_members_info"

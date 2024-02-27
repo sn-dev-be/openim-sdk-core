@@ -2,9 +2,16 @@ package club
 
 import (
 	"context"
+	"fmt"
+	"math"
 
 	"github.com/OpenIMSDK/protocol/club"
+	pbconstant "github.com/OpenIMSDK/protocol/constant"
+	"github.com/OpenIMSDK/protocol/sdkws"
+
 	"github.com/OpenIMSDK/tools/utils"
+	localUtil "github.com/openimsdk/openim-sdk-core/v3/pkg/utils"
+
 	"github.com/openimsdk/openim-sdk-core/v3/internal/util"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/constant"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/db/model_struct"
@@ -79,6 +86,53 @@ func (c *Club) dismissServerGroup(ctx context.Context, serverID, groupID string)
 	// c.conversationListener.OnServerUnreadMessageCountChanged(serverID, totalUnreadCount)
 	//
 
-	c.listener.OnServerGroupDismissed(groupID)
+	return nil
+}
+
+func (c *Club) AcceptServerApplication(ctx context.Context, serverID, fromUserID, handleMsg, conversationID string) error {
+	return c.HandlerServerApplication(ctx, &club.ServerApplicationResponseReq{ServerID: serverID, FromUserID: fromUserID, HandledMsg: handleMsg, HandleResult: constant.GroupResponseAgree, ConversationID: conversationID})
+}
+
+func (c *Club) RefuseServerApplication(ctx context.Context, serverID, fromUserID, handleMsg, conversationID string) error {
+	return c.HandlerServerApplication(ctx, &club.ServerApplicationResponseReq{ServerID: serverID, FromUserID: fromUserID, HandledMsg: handleMsg, HandleResult: constant.GroupResponseRefuse, ConversationID: conversationID})
+}
+
+func (c *Club) HandlerServerApplication(ctx context.Context, req *club.ServerApplicationResponseReq) error {
+	keywordList := []string{}
+	keywordList = append(keywordList, "serverID\\\":\\\""+req.ServerID)
+	keywordList = append(keywordList, "userID\\\":\\\""+req.FromUserID)
+	//keywordList = append(keywordList, "handleResult\\\":\\\""+strconv.FormatInt(pbconstant.ServerResponseNotHandle, 10))
+	sList, err := c.db.SearchMessageByContentTypeAndKeyword(ctx, []int{constant.JoinServerApplicationNotification}, req.ConversationID, keywordList, constant.KeywordMatchAnd, 0, math.MaxInt64)
+	if err != nil {
+		return err
+	}
+
+	seqs := []int64{}
+	for _, msg := range sList {
+		if msg.ContentType != constant.JoinServerApplicationNotification {
+			continue
+		}
+		var detail sdkws.JoinServerApplicationTips
+		if err := localUtil.UnmarshalNotificationElem([]byte(msg.Content), &detail); err != nil {
+			return err
+		}
+		if detail.Server.ServerID != req.ServerID {
+			continue
+		}
+		if detail.Applicant.UserID != req.FromUserID {
+			continue
+		}
+		if detail.HandleResult != pbconstant.ServerResponseNotHandle {
+			continue
+		}
+		seqs = append(seqs, msg.Seq)
+	}
+	req.Seqs = seqs
+
+	fmt.Println(utils.StructToJsonString(req))
+	if err := util.ApiPost(ctx, constant.ServerApplicationResponseRouter, req, nil); err != nil {
+		return err
+	}
+	// SyncAdminGroupApplication todo
 	return nil
 }

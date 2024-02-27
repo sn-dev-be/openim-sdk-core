@@ -37,5 +37,13 @@ func SetServerMemberInfo(callback open_im_sdk_callback.Base, operationID string,
 }
 
 func GetSpecifiedServersInfo(callback open_im_sdk_callback.Base, operationID string, serverIDList string) {
-	call(callback, operationID, UserForSDK.club.GetSpecifiedServersInfo, serverIDList)
+	call(callback, operationID, UserForSDK.Club().GetSpecifiedServersInfo, serverIDList)
+}
+
+func AcceptServerApplication(callback open_im_sdk_callback.Base, operationID string, serverID string, fromUserID string, handleMsg string, conversationID string) {
+	call(callback, operationID, UserForSDK.Club().AcceptServerApplication, serverID, fromUserID, handleMsg, conversationID)
+}
+
+func RefuseServerApplication(callback open_im_sdk_callback.Base, operationID string, serverID string, fromUserID string, handleMsg string, conversationID string) {
+	call(callback, operationID, UserForSDK.Club().RefuseServerApplication, serverID, fromUserID, handleMsg, conversationID)
 }
