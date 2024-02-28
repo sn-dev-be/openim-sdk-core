@@ -53,6 +53,7 @@ func (c *Club) doNotification(ctx context.Context, msg *sdkws.MsgData) error {
 		if err := utils.UnmarshalNotificationElem(msg.Content, &detail); err != nil {
 			return err
 		}
+		c.listener.OnServerDismissed(detail.ServerID)
 		return c.dismissServer(ctx, detail.ServerID)
 
 	case constant.ServerInfoSetNotification:
