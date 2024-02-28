@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/openimsdk/openim-sdk-core/v3/internal/interaction"
+	"github.com/openimsdk/openim-sdk-core/v3/internal/util"
 	"github.com/openimsdk/openim-sdk-core/v3/open_im_sdk_callback"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/ccontext"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/constant"
@@ -58,16 +59,16 @@ func (s *Signaling) SendVoiceSignal(
 	if err := s.initBasicInfo(ctx, &m, constant.VoiceCall, signalType); err != nil {
 		return nil, err
 	}
-	conversation, err := s.db.GetConversation(ctx, voiceElem.ConversationID)
-	if err != nil {
-		log.ZError(ctx, "SendSignalMessage GetConversation err", err)
-		return nil, err
-	}
+	conversationType, sourceID := util.ParseConversationID(voiceElem.ConversationID)
+	// conversation, err := s.db.GetConversation(ctx, voiceElem.ConversationID)
+	// if err != nil {
+	// 	log.ZError(ctx, "SendSignalMessage GetConversation err", err)
+	// 	return nil, err
+	// }
 	voiceElem.FromUserID = s.loginUserID
-	voiceElem.SessionType = conversation.ConversationType
-	voiceElem.ConversationID = conversation.ConversationID
-	if conversation.ConversationType == constant.GroupChatType {
-		voiceElem.GroupID = conversation.GroupID
+	voiceElem.SessionType = int32(conversationType)
+	if conversationType == constant.GroupChatType {
+		voiceElem.GroupID = sourceID
 	}
 	m.Content = utils.StructToJsonString(voiceElem)
 	log.ZInfo(ctx, "send voice signal", "signalType", signalType, "userID", s.loginUserID)
