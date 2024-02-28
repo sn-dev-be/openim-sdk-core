@@ -36,6 +36,30 @@ func (c *Club) CreateServer(ctx context.Context, req *club.CreateServerReq) (str
 	return resp.ServerID, nil
 }
 
+func (c *Club) DismissServer(ctx context.Context, req *club.DismissServerReq) error {
+	if req.ServerID == "" {
+		return sdkerrs.ErrArgs
+	}
+
+	_, err := util.CallApi[club.DismissServerResp](ctx, constant.DismissServerRouter, req)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *Club) DeleteServerGroup(ctx context.Context, req *club.DeleteServerGroupReq) error {
+	if req.ServerID == "" || req.GroupIDs == nil || len(req.GroupIDs) == 0 {
+		return sdkerrs.ErrArgs
+	}
+
+	_, err := util.CallApi[club.DeleteServerGroupResp](ctx, constant.DeleteServerGroupRouter, req)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (c *Club) GetSpecifiedServersInfo(ctx context.Context, serverIDs []string) ([]*model_struct.LocalServer, error) {
 	serverList, err := c.db.GetServers(ctx, serverIDs)
 	if err != nil {

@@ -141,9 +141,12 @@ const (
 	GetGroupsByServerRouter            = RouterClub + "/get_groups_by_server"
 	GetJoinedServerListRouter          = RouterClub + "/get_joined_server_list"
 	CreateServerRouter                 = RouterClub + "/create_server"
+	DismissServerRouter                = RouterClub + "/dismiss_server"
 	JoinServerRouter                   = RouterClub + "/join_server"
 	QuitServerRouter                   = RouterClub + "/quit_server"
 	ServerApplicationResponseRouter    = RouterClub + "/server_application_response"
+
+	DeleteServerGroupRouter = RouterClub + "/delete_server_group"
 
 	SetServerMemberInfoRouter  = RouterClub + "/set_server_member_info"
 	GetServerMembersInfoRouter = RouterClub + "/get_server_members_info"
