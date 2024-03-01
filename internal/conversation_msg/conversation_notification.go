@@ -186,6 +186,18 @@ func (c *Conversation) doUpdateConversation(c2v common.Cmd2Value) {
 			}
 		}
 
+	case constant.ServerTotalUnreadMessageChanged:
+		if node.Args != nil {
+			serverID := node.Args.(string)
+			if serverID != "" {
+				serverUnreadCount, err := c.db.GetServerTotalUnreadCountByServerID(ctx, serverID)
+				if err != nil {
+					log.ZError(ctx, "internal OnServerUnreadMessageCountChanged get unreadCount err:", err)
+				} else {
+					c.ConversationListener.OnServerUnreadMessageCountChanged(serverID, serverUnreadCount)
+				}
+			}
+		}
 	case constant.UpdateConFaceUrlAndNickName:
 		var lc model_struct.LocalConversation
 		st := node.Args.(common.SourceIDAndSessionType)
