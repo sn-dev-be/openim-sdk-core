@@ -24,12 +24,12 @@ func CreateServer(callback open_im_sdk_callback.Base, operationID string, server
 	call(callback, operationID, UserForSDK.Club().CreateServer, serverReqInfo)
 }
 
-func DismissServer(callback open_im_sdk_callback.Base, operationID string, serverReqInfo string) {
-	call(callback, operationID, UserForSDK.Club().DismissServer, serverReqInfo)
+func DismissServer(callback open_im_sdk_callback.Base, operationID string, serverID string) {
+	call(callback, operationID, UserForSDK.Club().DismissServer, serverID)
 }
 
-func DeleteServerGroup(callback open_im_sdk_callback.Base, operationID string, serverReqInfo string) {
-	call(callback, operationID, UserForSDK.Club().DeleteServerGroup, serverReqInfo)
+func DeleteServerGroup(callback open_im_sdk_callback.Base, operationID string, serverID string, groupIDs string) {
+	call(callback, operationID, UserForSDK.Club().DeleteServerGroup, serverID, groupIDs)
 }
 
 func JoinServer(callback open_im_sdk_callback.Base, operationID string, joinServerReq string) {
@@ -38,6 +38,10 @@ func JoinServer(callback open_im_sdk_callback.Base, operationID string, joinServ
 
 func QuitServer(callback open_im_sdk_callback.Base, operationID string, quitServerReq string) {
 	call(callback, operationID, UserForSDK.Club().QuitServer, quitServerReq)
+}
+
+func KickServerMember(callback open_im_sdk_callback.Base, operationID string, serverID, reason string, kickedUserIDs string) {
+	call(callback, operationID, UserForSDK.Club().KickServerMember, serverID, reason, kickedUserIDs)
 }
 
 func SetServerMemberInfo(callback open_im_sdk_callback.Base, operationID string, serverMembers string) {

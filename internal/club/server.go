@@ -36,25 +36,38 @@ func (c *Club) CreateServer(ctx context.Context, req *club.CreateServerReq) (str
 	return resp.ServerID, nil
 }
 
-func (c *Club) DismissServer(ctx context.Context, req *club.DismissServerReq) error {
-	if req.ServerID == "" {
+func (c *Club) DismissServer(ctx context.Context, serverID string) error {
+	if serverID == "" {
 		return sdkerrs.ErrArgs
 	}
 
-	_, err := util.CallApi[club.DismissServerResp](ctx, constant.DismissServerRouter, req)
+	_, err := util.CallApi[club.DismissServerResp](ctx, constant.DismissServerRouter, &club.DismissServerReq{ServerID: serverID})
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (c *Club) DeleteServerGroup(ctx context.Context, req *club.DeleteServerGroupReq) error {
-	if req.ServerID == "" || req.GroupIDs == nil || len(req.GroupIDs) == 0 {
+func (c *Club) DeleteServerGroup(ctx context.Context, serverID string, groupIDs []string) error {
+	if serverID == "" || len(groupIDs) == 0 {
 		return sdkerrs.ErrArgs
 	}
 
-	_, err := util.CallApi[club.DeleteServerGroupResp](ctx, constant.DeleteServerGroupRouter, req)
+	_, err := util.CallApi[club.DeleteServerGroupResp](ctx, constant.DeleteServerGroupRouter, &club.DeleteServerGroupReq{
+		ServerID: serverID,
+		GroupIDs: groupIDs,
+	})
 	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *Club) KickServerMember(ctx context.Context, serverID, reason string, kickedUserIDs []string) error {
+	if serverID == "" || len(kickedUserIDs) == 0 {
+		return sdkerrs.ErrArgs
+	}
+	if err := util.ApiPost(ctx, constant.KickServerMemberRouter, &club.KickServerMemberReq{ServerID: serverID, KickedUserIDs: kickedUserIDs, Reason: reason}, nil); err != nil {
 		return err
 	}
 	return nil
@@ -102,14 +115,6 @@ func (c *Club) dismissServerGroup(ctx context.Context, serverID, groupID string)
 	if err != nil {
 		return err
 	}
-
-	// totalUnreadCount, err := c.db.GetServerTotalUnreadCountByServerID(ctx, serverID)
-	// if err != nil {
-	// 	return err
-	// }
-	// c.conversationListener.OnServerUnreadMessageCountChanged(serverID, totalUnreadCount)
-	//
-
 	return nil
 }
 
