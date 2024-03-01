@@ -21,6 +21,7 @@ import (
 
 	"github.com/OpenIMSDK/protocol/sdkws"
 	"github.com/OpenIMSDK/tools/log"
+	"github.com/openimsdk/openim-sdk-core/v3/pkg/common"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/constant"
 	"github.com/openimsdk/openim-sdk-core/v3/pkg/utils"
 )
@@ -162,8 +163,10 @@ func (c *Club) doNotification(ctx context.Context, msg *sdkws.MsgData) error {
 		if err != nil {
 			return err
 		}
+		c.dismissServerGroup(ctx, detail.ServerID, detail.GroupID)
 		c.listener.OnServerGroupDismissed(string(data))
-		return c.dismissServerGroup(ctx, detail.ServerID, detail.GroupID)
+		common.TriggerCmdUpdateConversation(ctx, common.UpdateConNode{Action: constant.ServerTotalUnreadMessageChanged, Args: group.ServerID}, c.conversationCh)
+		return nil
 
 		//return c.group.SyncGroups(ctx, detail.Group.GroupID)
 	// case constant.GroupOwnerTransferredNotification: // 1507

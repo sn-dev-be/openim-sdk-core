@@ -345,6 +345,7 @@ const (
 	SyncConversation                  = 15
 	SyncMessageListReactionExtensions = 16
 	SyncMessageListTypeKeyInfo        = 17
+	ServerTotalUnreadMessageChanged   = 18
 
 	HasRead = 1
 	NotRead = 0
