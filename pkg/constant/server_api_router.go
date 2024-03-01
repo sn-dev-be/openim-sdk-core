@@ -144,6 +144,7 @@ const (
 	DismissServerRouter                = RouterClub + "/dismiss_server"
 	JoinServerRouter                   = RouterClub + "/join_server"
 	QuitServerRouter                   = RouterClub + "/quit_server"
+	KickServerMemberRouter             = RouterClub + "/kick_server_member"
 	ServerApplicationResponseRouter    = RouterClub + "/server_application_response"
 
 	DeleteServerGroupRouter = RouterClub + "/delete_server_group"
